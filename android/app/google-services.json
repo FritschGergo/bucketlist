@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "600745569263",
+    "project_id": "bucketlist-69283",
+    "storage_bucket": "bucketlist-69283.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:600745569263:android:75d6a08ac8fdd1538c241a",
+        "android_client_info": {
+          "package_name": "com.example.bucketlist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "600745569263-slvqg6rcc6ejjhrrrjhuq7kt2hlie231.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdxhc2FCMjp6WamqV_nOVEQDLWFDqD2B8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "600745569263-slvqg6rcc6ejjhrrrjhuq7kt2hlie231.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
