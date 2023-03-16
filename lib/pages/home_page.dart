@@ -1,54 +1,102 @@
-import 'package:bucketlist/auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// ignore_for_file: sort_child_properties_last, prefer_const_constructors
+
+import 'package:bucketlist/pages/list_page.dart';
+import 'package:bucketlist/pages/profile_page.dart';
 import 'package:flutter/material.dart';
+import 'package:bucketlist/pages/home2_page.dart';
+import 'package:bucketlist/pages/message_page.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
 
-  final User? user = Auth().correntUser;
 
-  Future<void> signOut() async {
-    await Auth().signOut();
-
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.red,
+      ),
+      home: MyHomePage(),
+    );
   }
-  Widget _title() {
-    return const Text('Firebase Auth');
-  }
+}
 
-   Widget _userUid() {
-    return Text(user?.email ?? 'User email');
-  }
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
 
-  Widget _signOutButton(){
-    return ElevatedButton(onPressed: signOut,
-     child: const Text('Sign Out'));
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin{
+
+  late TabController _controller;
+
+  @override
+  void initState(){
+    _controller = TabController(length: 4, vsync: this);
+  } 
+
+  @override 
+  void dispose(){
+    _controller.dispose();
+    super.dispose();
+    
   }
 
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: _title(),
+      bottomNavigationBar: Container(
+        
+        margin: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(20),
         ),
-        body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              _userUid(),
-              _signOutButton()
-            ],
-          )
-          ,)
+        child: ClipRRect(borderRadius: BorderRadius.circular(20),
+        child: DefaultTabController(                         
+          length: 4,
+          child: TabBar(
+            controller: _controller,
+            unselectedLabelColor: Colors.black,
+            // ignore: prefer_const_literals_to_create_immutables
+            tabs: [
+              Tab(
+                icon: Icon(Icons.home),
+               ),
+               Tab(
+                 icon: Icon(Icons.list),
+               ),
+               Tab(
+                 icon: Icon(Icons.chat),
+               ),
+               Tab(
+                 icon: Icon(Icons.person),
+               ),
+              ],
+            ),
+            )
+          ),
+        ),
+        body: TabBarView(
+            children: [
+            Home2Page(),
+            listPage(),
+            MessagePage(),
+            ProfilePage(),
+            
 
-    );
+          ],
+          controller: _controller,
+        ),
 
+
+      );
+    
   }
-
 }
 
 

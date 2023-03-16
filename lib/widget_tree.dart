@@ -1,5 +1,5 @@
 import 'package:bucketlist/auth.dart';
-import 'package:bucketlist/pages/home_page.dart';
+import 'package:bucketlist/pages/Home_page.dart';
 import 'package:bucketlist/pages/login_register_page.dart';
 import 'package:flutter/material.dart';
 
