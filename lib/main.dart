@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:bucketlist/widget_tree.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-
-Future<void> main() async{
+// oh new line!!! :)
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(const MyApp());
