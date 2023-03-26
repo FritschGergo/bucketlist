@@ -1,4 +1,5 @@
 import 'package:bucketlist/auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,11 @@ class ProfilePage extends StatelessWidget {
 
   }
 
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  Future<void> addata() async{
+    await db.collection("Cards").add({"test" : "test"});
+  }
+
    Widget _userUid() {
     return Text(user?.email ?? 'User email');
   }
@@ -19,6 +25,13 @@ class ProfilePage extends StatelessWidget {
   Widget _signOutButton(){
     return ElevatedButton(onPressed: signOut,
      child: const Text('Sign Out'));
+      
+    
+  }
+
+  Widget _AddButton(){
+    return ElevatedButton(onPressed: addata,
+     child: const Text('Add'));
       
     
   }
@@ -36,7 +49,8 @@ class ProfilePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               _userUid(),
-              _signOutButton()
+              _signOutButton(),
+              _AddButton(),
             ],
           )
           ,)
