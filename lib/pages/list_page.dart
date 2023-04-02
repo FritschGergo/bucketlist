@@ -25,10 +25,10 @@ class _listPageState extends State<listPage>
   FirebaseFirestore db = FirebaseFirestore.instance;
   final User? user = Auth().correntUser;
 
-  Future<QuerySnapshot<Object?>> getdata() async {
+  Future<QuerySnapshot<Object?>> getdata(String deck) async {
    
    QuerySnapshot mydata = await db.collection("users").doc("${user?.uid}").collection("saved_decks")
-    .where("name",isEqualTo: "bucketList").get();
+    .where("name",isEqualTo: deck).get();
     
     QuerySnapshot cards = await db.collection("users").doc("${user?.uid}").collection("saved_decks").doc(mydata.docs.first.id)
     .collection("cards").where("list",isEqualTo: true).get();
@@ -36,18 +36,56 @@ class _listPageState extends State<listPage>
     return cards;
   }
 
-  Widget projectWidget(){
+
+  Widget MyGridViewWidget(String deck){
     return FutureBuilder(
-      future: getdata(),
+      future: getdata(deck),
       builder: (context , snapshot){
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         }
         List<String> MyData = [];
         QuerySnapshot<Object?> _querrySnapshot = snapshot.data!;
-        
           for (var docSnapshot in _querrySnapshot.docs){
+               var data = docSnapshot.data() as Map;
+               for (var i in data.entries)
+               {
+                if (i.key == "text") {
+                  MyData.add(i.value.toString());
+                }
+               }
+             }
+            
+        return  GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    crossAxisCount: 2,
+                   ),
+                   itemCount: MyData.length,
+                   itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                     color: Colors.red,
+                     child: Center(child: Text(MyData[index])),
+                                    
+                  );
+                }
+             );
+        } 
+        
+      );
+  }
 
+  Widget projectWidget(){
+    return FutureBuilder(
+      future: getdata("bucketList"),
+      builder: (context , snapshot){
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        }
+        List<String> MyData = [];
+        QuerySnapshot<Object?> _querrySnapshot = snapshot.data!;
+          for (var docSnapshot in _querrySnapshot.docs){
                var data = docSnapshot.data() as Map;
                for (var i in data.entries)
                {
@@ -117,25 +155,43 @@ class _listPageState extends State<listPage>
           tabs: const <Widget>[
             Tab(
               child: 
-                Text("valami")
+                Text("Bucket list")
             ),
             Tab(
               child: 
-                Text("wish list"),
+                Text("Surprise"),
             ),
             Tab(
               child: 
-                Text("done list"),
+                Text("Done"),
             ),
             Tab(
               child: 
-                Text("done list"),
+                Text("Places/Toys"),
             ),
             
           ],
         ),
       ),
-      body: projectWidget(),
+      body: TabBarView(
+          controller: _tabController,
+          children: [
+          Center(
+            child:  MyGridViewWidget("bucketList")
+          ),
+          Center(
+            child:  MyGridViewWidget("wishList")
+          ),
+          Center(
+            child:  MyGridViewWidget("bucketList")
+          
+          ),
+          Center(
+            child:  MyGridViewWidget("bucketList")
+          
+          ),
+        ],
+        )
     );
   }
 }
