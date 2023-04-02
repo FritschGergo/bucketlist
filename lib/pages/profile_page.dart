@@ -14,9 +14,18 @@ class ProfilePage extends StatelessWidget {
   }
 
   FirebaseFirestore db = FirebaseFirestore.instance;
+
+  
   Future<void> addata() async{
-    await db.collection("Cards").add({"test" : "test"});
+
+   // await db.collection("users").doc("test${user?.uid}").set({"partner " : "sanya", "token" : 1});
+   // var valami = await db.collection("users").doc("${user?.uid}").collection("savedDecks")
+   // .where("b",isEqualTo: true ).get();
+      
+    
+
   }
+  
 
    Widget _userUid() {
     return Text(user?.email ?? 'User email');

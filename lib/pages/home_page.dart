@@ -55,6 +55,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
         decoration: BoxDecoration(
           color: Colors.red,
           borderRadius: BorderRadius.circular(20),
+          
         ),
         child: ClipRRect(borderRadius: BorderRadius.circular(20),
         child: DefaultTabController(                         
