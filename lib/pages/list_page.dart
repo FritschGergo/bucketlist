@@ -11,17 +11,11 @@ class listPage extends StatefulWidget {
   State<listPage> createState() => _listPageState();
 }
 
-FirebaseFirestore db = FirebaseFirestore.instance;
-
-
 
 class _listPageState extends State<listPage>
     with TickerProviderStateMixin {
+
   late TabController _tabController;
-  
-
-  late Map<String, dynamic> data;
-
   FirebaseFirestore db = FirebaseFirestore.instance;
   final User? user = Auth().correntUser;
 
@@ -45,8 +39,7 @@ class _listPageState extends State<listPage>
           return const CircularProgressIndicator();
         }
         List<String> MyData = [];
-        QuerySnapshot<Object?> _querrySnapshot = snapshot.data!;
-          for (var docSnapshot in _querrySnapshot.docs){
+          for (var docSnapshot in  snapshot.data!.docs){
                var data = docSnapshot.data() as Map;
                for (var i in data.entries)
                {
@@ -76,64 +69,7 @@ class _listPageState extends State<listPage>
       );
   }
 
-  Widget projectWidget(){
-    return FutureBuilder(
-      future: getdata("bucketList"),
-      builder: (context , snapshot){
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        }
-        List<String> MyData = [];
-        QuerySnapshot<Object?> _querrySnapshot = snapshot.data!;
-          for (var docSnapshot in _querrySnapshot.docs){
-               var data = docSnapshot.data() as Map;
-               for (var i in data.entries)
-               {
-                if (i.key == "text") {
-                  MyData.add(i.value.toString());
-                }
-               }
-             }
-            
-          return  TabBarView(
-          controller: _tabController,
-          children: [
-          Center(
-                child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    crossAxisCount: 2,
-                   ),
-                   itemCount: MyData.length,
-                   itemBuilder: (BuildContext context, int index) {
-                  return Card(
-                     color: Colors.red,
-                     child: Center(child: Text(MyData[index])),
-                                    
-                  );
-                }
-             ),         
-          ),
-          Center(
-            child: Text("It's rainy here"),
-          ),
-          Center(
-            child: Text("It's sunny here"),
-          
-          ),
-          Center(
-            child: Text("It's sunny here"),
-          
-          ),
-        ],
-        );
-          
-        }
-      );
-  }
-
-
+ 
   
 
   @override
