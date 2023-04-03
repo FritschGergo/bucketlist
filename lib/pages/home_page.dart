@@ -1,104 +1,134 @@
-// ignore_for_file: sort_child_properties_last, prefer_const_constructors
 
-import 'package:bucketlist/pages/list_page.dart';
-import 'package:bucketlist/pages/profile_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:bucketlist/pages/home2_page.dart';
-import 'package:bucketlist/pages/message_page.dart';
+import '../auth.dart';
 
-class HomePage extends StatelessWidget {
-  HomePage({Key? key}) : super(key: key);
 
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.red,
-      ),
-      home: MyHomePage(),
-    );
-  }
+  State<HomePage> createState() => _HomePageState();
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
 
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
+class _HomePageState extends State<HomePage>
+    with TickerProviderStateMixin {
 
-class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin{
+  late TabController _tabController;
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  final User? user = Auth().correntUser;
 
-  late TabController _controller;
-
-  @override
-  void initState(){
-    _controller = TabController(length: 4, vsync: this);
-  } 
-
-  @override 
-  void dispose(){
-    _controller.dispose();
-    super.dispose();
+  Future<QuerySnapshot<Object?>> getdata(String deck) async {
+   
+   QuerySnapshot mydata = await db.collection("users").doc("${user?.uid}").collection("saved_decks")
+    .where("name",isEqualTo: deck).get();
     
+    QuerySnapshot cards = await db.collection("users").doc("${user?.uid}").collection("saved_decks").doc(mydata.docs.first.id)
+    .collection("cards").where("list",isEqualTo: true).get();
+    
+    return cards;
   }
 
+
+  Widget MyGridViewWidget(String deck){
+    return FutureBuilder(
+      future: getdata(deck),
+      builder: (context , snapshot){
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        }
+        List<String> MyData = [];
+          for (var docSnapshot in  snapshot.data!.docs){
+               var data = docSnapshot.data() as Map;
+               for (var i in data.entries)
+               {
+                if (i.key == "text") {
+                  MyData.add(i.value.toString());
+                }
+               }
+             }
+            
+        return  GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    crossAxisCount: 2,
+                   ),
+                   itemCount: MyData.length,
+                   itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                     color: Colors.red,
+                     child: Center(child: Text(MyData[index])),
+                                    
+                  );
+                }
+             );
+        } 
+        
+      );
+  }
+
+ 
+  
+
+  @override
+  void initState() {
+    super.initState();
+    
+    _tabController = TabController(
+      length: 4, 
+      vsync: this);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: Container(
-        
-        margin: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.red,
-          borderRadius: BorderRadius.circular(20),
-          
-        ),
-        child: ClipRRect(borderRadius: BorderRadius.circular(20),
-        child: DefaultTabController(                         
-          length: 4,
-          child: TabBar(
-            controller: _controller,
-            unselectedLabelColor: Colors.black,
-            // ignore: prefer_const_literals_to_create_immutables
-            tabs: [
-              Tab(
-                icon: Icon(Icons.home),
-               ),
-               Tab(
-                 icon: Icon(Icons.list),
-               ),
-               Tab(
-                 icon: Icon(Icons.chat),
-               ),
-               Tab(
-                 icon: Icon(Icons.person),
-               ),
-              ],
+      appBar: AppBar(
+        toolbarHeight: 0,
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const <Widget>[
+            Tab(
+              child: 
+                Text("Bucket list")
             ),
-            )
-          ),
-        ),
-        body: TabBarView(
-            children: [
-            Home2Page(),
-            listPage(),
-            MessagePage(),
-            ProfilePage(),
+            Tab(
+              child: 
+                Text("Surprise"),
+            ),
+            Tab(
+              child: 
+                Text("Done"),
+            ),
+            Tab(
+              child: 
+                Text("Places/Toys"),
+            ),
             
-
           ],
-          controller: _controller,
         ),
-
-
-      );
-    
+      ),
+      body: TabBarView(
+          controller: _tabController,
+          children: [
+          Center(
+            child:  MyGridViewWidget("bucketList")
+          ),
+          Center(
+            child:  MyGridViewWidget("wishList")
+          ),
+          Center(
+            child:  MyGridViewWidget("bucketList")
+          
+          ),
+          Center(
+            child:  MyGridViewWidget("bucketList")
+          
+          ),
+        ],
+        )
+    );
   }
 }
-
-
-
