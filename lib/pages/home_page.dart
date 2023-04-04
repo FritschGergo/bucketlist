@@ -1,4 +1,7 @@
 
+import 'dart:math';
+
+import 'package:bucketlist/pages/review_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -19,14 +22,12 @@ class _HomePageState extends State<HomePage>
   late TabController _tabController;
   FirebaseFirestore db = FirebaseFirestore.instance;
   final User? user = Auth().correntUser;
+  
 
   Future<QuerySnapshot<Object?>> getdata(String deck) async {
    
-   QuerySnapshot mydata = await db.collection("users").doc("${user?.uid}").collection("saved_decks")
+   QuerySnapshot cards = await db.collection("decks")
     .where("name",isEqualTo: deck).get();
-    
-    QuerySnapshot cards = await db.collection("users").doc("${user?.uid}").collection("saved_decks").doc(mydata.docs.first.id)
-    .collection("cards").where("list",isEqualTo: true).get();
     
     return cards;
   }
@@ -40,12 +41,15 @@ class _HomePageState extends State<HomePage>
           return const CircularProgressIndicator();
         }
         List<String> MyData = [];
+        List<String> MyDataID = [];
+
           for (var docSnapshot in  snapshot.data!.docs){
                var data = docSnapshot.data() as Map;
                for (var i in data.entries)
                {
                 if (i.key == "text") {
                   MyData.add(i.value.toString());
+                  MyDataID.add(docSnapshot.id);
                 }
                }
              }
@@ -59,15 +63,47 @@ class _HomePageState extends State<HomePage>
                    itemCount: MyData.length,
                    itemBuilder: (BuildContext context, int index) {
                   return Card(
-                     color: Colors.red,
-                     child: Center(child: Text(MyData[index])),
-                                    
+                      child:InkWell(
+                        onTap: () {
+                            
+                            copyDeck(MyDataID[index]);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => review_page()),
+                            );
+                          },
+                        child: Center(child: Text(MyData[index])),
+                     
+                      )        
                   );
                 }
              );
         } 
         
       );
+  }
+
+  Future<void> copyDeckAsisit(QuerySnapshot cards) async {
+      for (var docs in  cards.docs.cast()){
+
+            Map<String, dynamic> MyMap = {};
+            for (var i in (docs.data() as Map).entries){
+              MyMap.addAll({i.key : i.value});
+            }
+            await db.collection("users").doc("${user?.uid}")
+            .collection("InProgressDecks").doc(docs.id).set(MyMap);
+    }
+  }
+
+  Future<void> copyDeck(String myDataID) async {
+
+    //QuerySnapshot cards = await 
+    db.collection("decks").doc(myDataID).collection("cards")
+      .where("list", isEqualTo: true).get().then((QuerySnapshot cards) => {
+      copyDeckAsisit(cards)
+      });  
+    
+    
   }
 
  
@@ -92,19 +128,19 @@ class _HomePageState extends State<HomePage>
           tabs: const <Widget>[
             Tab(
               child: 
-                Text("Bucket list")
+                Text("Date Ideas")
             ),
             Tab(
               child: 
-                Text("Surprise"),
+                Text("2"),
             ),
             Tab(
               child: 
-                Text("Done"),
+                Text("3"),
             ),
             Tab(
               child: 
-                Text("Places/Toys"),
+                Text("4"),
             ),
             
           ],
@@ -114,7 +150,7 @@ class _HomePageState extends State<HomePage>
           controller: _tabController,
           children: [
           Center(
-            child:  MyGridViewWidget("bucketList")
+            child:  MyGridViewWidget("valami")
           ),
           Center(
             child:  MyGridViewWidget("wishList")
@@ -131,4 +167,5 @@ class _HomePageState extends State<HomePage>
         )
     );
   }
+  
 }

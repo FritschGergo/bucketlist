@@ -17,8 +17,26 @@ class ProfilePage extends StatelessWidget {
 
   
   Future<void> addata() async{
+  
+    db.collection("users").doc("${user?.uid}").get().
+      then((DocumentSnapshot test)  async => {
+        if (!test.exists){
+          await db.collection("users").doc("${user?.uid}").set({"partner" : "", "token" : 1}),
+          await db.collection("users").doc("${user?.uid}").collection("savedDecks").add({"name" : "BucketList"}),
+          await db.collection("users").doc("${user?.uid}").collection("savedDecks").add({"name" : "WishList"}),
+          await db.collection("users").doc("${user?.uid}").collection("savedDecks").add({"name" : "Done"}),
+        }
+      }
+      
+    
+      );
+  
+     
 
-   // await db.collection("users").doc("test${user?.uid}").set({"partner " : "sanya", "token" : 1});
+   //await db.collection("users").doc("0${user?.uid}").add({"partner " : "sanya", "token" : 1});
+   // 0 is host 1 is guest
+
+
    // var valami = await db.collection("users").doc("${user?.uid}").collection("savedDecks")
    // .where("b",isEqualTo: true ).get();
       

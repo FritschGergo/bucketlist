@@ -20,11 +20,13 @@ class _listPageState extends State<listPage>
   final User? user = Auth().correntUser;
 
   Future<QuerySnapshot<Object?>> getdata(String deck) async {
+
+  
    
-   QuerySnapshot mydata = await db.collection("users").doc("${user?.uid}").collection("saved_decks")
+   QuerySnapshot mydata = await db.collection("users").doc("${user?.uid}").collection("savedDecks")
     .where("name",isEqualTo: deck).get();
     
-    QuerySnapshot cards = await db.collection("users").doc("${user?.uid}").collection("saved_decks").doc(mydata.docs.first.id)
+    QuerySnapshot cards = await db.collection("users").doc("${user?.uid}").collection("savedDecks").doc(mydata.docs.first.id)
     .collection("cards").where("list",isEqualTo: true).get();
     
     return cards;
@@ -113,17 +115,17 @@ class _listPageState extends State<listPage>
           controller: _tabController,
           children: [
           Center(
-            child:  MyGridViewWidget("bucketList")
+            child:  MyGridViewWidget("BucketList")
           ),
           Center(
-            child:  MyGridViewWidget("wishList")
+            child:  MyGridViewWidget("WishList")
           ),
           Center(
-            child:  MyGridViewWidget("bucketList")
+            child:  MyGridViewWidget("Done")
           
           ),
           Center(
-            child:  MyGridViewWidget("bucketList")
+            child:  MyGridViewWidget("BucketList")
           
           ),
         ],
