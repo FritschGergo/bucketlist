@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import '../auth.dart';
-import '../main.dart';
-import 'navigaton_page.dart';
 class review_page extends StatefulWidget {
   const review_page({super.key});
 
@@ -20,39 +18,14 @@ class _review_page extends State<review_page> {
   FirebaseFirestore db = FirebaseFirestore.instance;
   final User? user = Auth().correntUser;
   int _currentIndex = 0;
+  int _previusReview = 0;
  
-  
-  final List<String> _strings = [
-    "String 1",
-    "String 2",
-    "String 3",
-    "String 4",
-    "String 5",
-    "String 6",
-    "String 7",
-    "String 8",
-    "String 9",
-    "String 10",
-    "String 11",
-    "String 12",
-    "String 13",
-    "String 14",
-    "String 15",
-    "String 16",
-    "String 17",
-    "String 18",
-    "String 19",
-    "String 20",
-  ];
-
-
-  void _incrementIndex() {
+  void _incrementIndex(int review) {
     setState(() {
       _currentIndex = (_currentIndex + 1) % 20;
+      _previusReview = review;
     });
   }
-
-
 
   Future<QuerySnapshot<Object?>> getdata() async {
    
@@ -62,12 +35,18 @@ class _review_page extends State<review_page> {
     return cards;
   }
 
+  Future<void> setreView(String id, int review) async {
+    await db.collection("users").doc("${user?.uid}")
+            .collection("InProgressDecks").doc(id).update({"review" : review});
+  }
 
-   Widget _currentCard() {
-    //i = 0   like
-    //i = 1   ok / maybe
-    //i = 2   later
-    //i = 3   dislike
+
+  Widget _currentCard() {
+    //i = 0   no rewiwe
+    //i = 1   like
+    //i = 2   ok / maybe
+    //i = 3   later
+    //i = 4   dislike
     List<String> MyData = [];
     List<String> MyDataID = [];
 
@@ -88,6 +67,14 @@ class _review_page extends State<review_page> {
                 }
                }
              }
+
+        if(_currentIndex > 0){
+           setreView(MyDataID[_currentIndex-1], _previusReview);
+
+        }
+
+
+        
         if(MyData.length <= _currentIndex)
         {
           SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -109,6 +96,12 @@ class _review_page extends State<review_page> {
 
 
   }
+  
+  
+    
+  
+  
+
   
   
 
@@ -133,7 +126,6 @@ class _review_page extends State<review_page> {
               ),
             ),
             
-          
           SizedBox(
             height: 100.0,
             width: double.infinity,
@@ -142,27 +134,27 @@ class _review_page extends State<review_page> {
                 children: [
                   FloatingActionButton(
                     heroTag: "btn1",
-                    onPressed: _incrementIndex,
+                    onPressed: _button0,
                     tooltip: 'Previous',
                     child: const Icon(Icons.favorite),
                   ),
                   FloatingActionButton(
                     heroTag: "btn2",
-                    onPressed: _incrementIndex,
+                    onPressed: _button1,
                     tooltip: 'Next',
-                    child: Icon(Icons.thumb_up),
+                    child: const Icon(Icons.thumb_up),
                   ),
                   FloatingActionButton(
                     heroTag: "btn3",
-                    onPressed: _incrementIndex,
+                    onPressed: _button2,
                     tooltip: 'Button 1',
-                    child: Icon(Icons.watch_later),
+                    child: const Icon(Icons.watch_later),
                   ),
                   FloatingActionButton(
                     heroTag: "btn0",
-                    onPressed: _incrementIndex,
+                    onPressed: _button3,
                     tooltip: 'Button 2',
-                    child: Icon(Icons.thumb_down),
+                    child: const Icon(Icons.thumb_down),
                   ),
               ],
             ),
@@ -173,4 +165,26 @@ class _review_page extends State<review_page> {
     );
   }
   
+  
+  void _button0() {
+    //_reviewCard(1, _currentIndex);
+    _incrementIndex(1);
+  }
+
+  void _button1() {
+    //_reviewCard(2, _currentIndex);
+    _incrementIndex(2);
+  }
+
+  void _button2() {
+    //_reviewCard(3, _currentIndex);
+    _incrementIndex(3);
+  }
+
+  void _button3() {
+    //_reviewCard(4, _currentIndex);
+    _incrementIndex(4);
+  }
 }
+
+

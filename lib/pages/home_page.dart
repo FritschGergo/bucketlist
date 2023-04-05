@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage>
   Future<void> copyDeckAsisit(QuerySnapshot cards) async {
       for (var docs in  cards.docs.cast()){
 
-            Map<String, dynamic> MyMap = {};
+            Map<String, dynamic> MyMap = {"review" : 0};
             for (var i in (docs.data() as Map).entries){
               MyMap.addAll({i.key : i.value});
             }
