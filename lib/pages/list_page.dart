@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../auth.dart';
+import '../globals.dart' as globals;
 
 
 class listPage extends StatefulWidget {
@@ -23,10 +24,9 @@ class _listPageState extends State<listPage>
 
   
    
-   QuerySnapshot mydata = await db.collection("users").doc("${user?.uid}").collection("savedDecks")
+   QuerySnapshot mydata = await db.collection("users").doc(globals.UID).collection("savedDecks")
     .where("name",isEqualTo: deck).get();
-    
-    QuerySnapshot cards = await db.collection("users").doc("${user?.uid}").collection("savedDecks").doc(mydata.docs.first.id)
+    QuerySnapshot cards = await db.collection("users").doc(globals.UID).collection("savedDecks").doc(mydata.docs.first.id)
     .collection("cards").where("list",isEqualTo: true).get();
     
     return cards;
@@ -34,6 +34,16 @@ class _listPageState extends State<listPage>
 
 
   Widget MyGridViewWidget(String deck){
+    if(deck == "WishList"){
+      if(globals.host == 2)
+      {
+        deck = "HostWishList";
+      }
+      else{
+        deck = "GuestWishList";
+      }
+    }
+
     return FutureBuilder(
       future: getdata(deck),
       builder: (context , snapshot){
@@ -47,7 +57,7 @@ class _listPageState extends State<listPage>
                {
                 if (i.key == "text") {
                   MyData.add(i.value.toString());
-                }
+              }
                }
              }
             
@@ -118,14 +128,14 @@ class _listPageState extends State<listPage>
             child:  MyGridViewWidget("BucketList")
           ),
           Center(
-            child:  MyGridViewWidget("WishList")
+            child: MyGridViewWidget("WishList")
           ),
           Center(
-            child:  MyGridViewWidget("Done")
+            child:  MyGridViewWidget("DoneList")
           
           ),
           Center(
-            child:  MyGridViewWidget("BucketList")
+            child:  MyGridViewWidget("IdeasList")
           
           ),
         ],

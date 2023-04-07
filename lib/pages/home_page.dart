@@ -1,11 +1,9 @@
-
-import 'dart:math';
-
 import 'package:bucketlist/pages/review_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../auth.dart';
+import '../globals.dart' as globals;
 
 
 class HomePage extends StatefulWidget {
@@ -86,12 +84,21 @@ class _HomePageState extends State<HomePage>
   Future<void> copyDeckAsisit(QuerySnapshot cards) async {
       for (var docs in  cards.docs.cast()){
 
-            Map<String, dynamic> MyMap = {"review" : 0};
+            Map<String, dynamic> MyMap = {};
             for (var i in (docs.data() as Map).entries){
               MyMap.addAll({i.key : i.value});
             }
-            await db.collection("users").doc("${user?.uid}")
-            .collection("InProgressDecks").doc(docs.id).set(MyMap);
+            db.collection("users").doc(globals.UID)
+            .collection("InProgressDecks").doc(docs.id).get().then((DocumentSnapshot DScnapshot) async => {
+              if(!DScnapshot.exists) {
+                await db.collection("users").doc(globals.UID)
+                .collection("InProgressDecks").doc(docs.id).set(MyMap)
+              },
+            
+            });
+            
+
+            
     }
   }
 

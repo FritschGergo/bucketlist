@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import '../globals.dart' as globals;
 
 import '../auth.dart';
 class review_page extends StatefulWidget {
@@ -29,15 +30,21 @@ class _review_page extends State<review_page> {
 
   Future<QuerySnapshot<Object?>> getdata() async {
    
-   QuerySnapshot cards = await db.collection("users").doc("${user?.uid}").collection("InProgressDecks")
+   QuerySnapshot cards = await db.collection("users").doc(globals.UID).collection("InProgressDecks")
     .where("list",isEqualTo: true).get();
     
     return cards;
   }
 
   Future<void> setreView(String id, int review) async {
-    await db.collection("users").doc("${user?.uid}")
-            .collection("InProgressDecks").doc(id).update({"review" : review});
+    if(globals.host == 2){ //guset
+      await db.collection("users").doc(globals.UID)
+            .collection("InProgressDecks").doc(id).update({"reviewGuest" : review});
+    }
+    else{ //host
+      await db.collection("users").doc(globals.UID)
+            .collection("InProgressDecks").doc(id).update({"reviewHost" : review});
+    } 
   }
 
 
@@ -47,8 +54,7 @@ class _review_page extends State<review_page> {
     //i = 2   ok / maybe
     //i = 3   later
     //i = 4   dislike
-    List<String> MyData = [];
-    List<String> MyDataID = [];
+   
 
     
       return FutureBuilder(
@@ -57,6 +63,8 @@ class _review_page extends State<review_page> {
           if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         }
+          List<String> MyData = [];
+          List<String> MyDataID = [];
           for (var docSnapshot in  snapshot.data!.docs){
                var data = docSnapshot.data() as Map;
                for (var i in data.entries)
@@ -77,6 +85,7 @@ class _review_page extends State<review_page> {
         
         if(MyData.length <= _currentIndex)
         {
+          copyReviewdCards();
           SchedulerBinding.instance.addPostFrameCallback((_) {
             Navigator.pop(context);
           },);
@@ -89,14 +98,69 @@ class _review_page extends State<review_page> {
          return const Text("done");
     }
       );
-    
-    
-    
-    
-
-
   }
   
+    void copyReviewdCards(){
+      
+      getdata().then((QSnapshot) => {copyReviewdCardsAsist2(QSnapshot)});
+      
+    }
+
+    void copyReviewdCardsAsist2(QuerySnapshot QSnapshot)
+    {
+      int reviewHost = 0;
+      int reviewGuest = 0;
+      
+      for (var docSnapshot in  QSnapshot.docs){
+               var data = docSnapshot.data() as Map;
+               for (var i in data.entries)
+                {
+                  if (i.key == "reviewGuest") reviewGuest = i.value;
+                  if (i.key == "reviewHost") reviewHost = i.value;
+                }
+
+               if(reviewHost == 0 || reviewGuest == 0){
+                  //wait for the second review
+                }
+                else if(reviewHost == 4 || reviewGuest == 4){
+                  //delete card 
+                  copyReviewdCardsAsist("DislikeList", docSnapshot.id , data);
+                }
+                else if(reviewHost == 3 || reviewGuest == 3){
+                  //later deck
+                  copyReviewdCardsAsist("LaterList", docSnapshot.id , data);
+                }
+                else if(reviewHost == 1 && reviewGuest == 1){
+                  //Bucket List deck
+                  copyReviewdCardsAsist("BucketList", docSnapshot.id , data);
+                }
+                else if(reviewHost == 2 && reviewGuest == 2){
+                  //ideas card 
+                  copyReviewdCardsAsist("IdeasList", docSnapshot.id , data);
+                  
+                }
+                else if(reviewHost == 1 && reviewGuest == 2){
+                  //Host Wishes deck
+                  copyReviewdCardsAsist("HostWishList", docSnapshot.id , data);
+                }
+                else if(reviewHost == 2 && reviewGuest == 1){
+                  //Host Guest deck
+                  copyReviewdCardsAsist("GuestWishList", docSnapshot.id , data);
+                }
+             }
+
+    }
+
+   Future<void> copyReviewdCardsAsist(String deck, String id, Map data) async {
+        QuerySnapshot mydata = await db.collection("users").doc(globals.UID).collection("savedDecks")
+    .where("name",isEqualTo: deck).get();
+
+        await db.collection("users").doc(globals.UID).collection("savedDecks").doc(mydata.docs.first.id)
+            .collection("cards").doc(id).set(data as Map<String,dynamic>).then((value) async => {
+              await db.collection("users").doc(globals.UID).collection("InProgressDecks").doc(id).delete()
+            });
+   }
+
   
     
   
@@ -185,6 +249,8 @@ class _review_page extends State<review_page> {
     //_reviewCard(4, _currentIndex);
     _incrementIndex(4);
   }
+  
+ 
+  
 }
-
 
