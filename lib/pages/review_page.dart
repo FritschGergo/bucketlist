@@ -1,3 +1,7 @@
+// ignore_for_file: unrelated_type_equality_checks
+
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +24,8 @@ class _review_page extends State<review_page> {
   final User? user = Auth().correntUser;
   int _currentIndex = 0;
   int _previusReview = 0;
+  var listener;
+  
  
   void _incrementIndex(int review) {
     setState(() {
@@ -28,15 +34,20 @@ class _review_page extends State<review_page> {
     });
   }
 
-  Future<QuerySnapshot<Object?>> getdata() async {
-   
+  void listenFirstcard(){    
+    final collection = db.collection("users").doc(globals.UID).collection("InProgressDecks");
+    listener = collection.snapshots().listen((event) {
+      setState(() {});
+    });
+  } 
+
+  Future<QuerySnapshot<Object?>> getdata() async {  
    QuerySnapshot cards = await db.collection("users").doc(globals.UID).collection("InProgressDecks")
-    .where("list",isEqualTo: true).get();
-    
+    .where("list",isEqualTo: true).get();   
     return cards;
   }
 
-  Future<void> setreView(String id, int review) async {
+  Future<void> setReview(String id, int review) async {
     if(globals.host == 2){ //guset
       await db.collection("users").doc(globals.UID)
             .collection("InProgressDecks").doc(id).update({"reviewGuest" : review});
@@ -47,23 +58,24 @@ class _review_page extends State<review_page> {
     } 
   }
 
-
   Widget _currentCard() {
     //i = 0   no rewiwe
     //i = 1   like
     //i = 2   ok / maybe
     //i = 3   later
-    //i = 4   dislike
-   
-
-    
-      return FutureBuilder(
-        future: getdata(),
+    //i = 4   dislike  
+    return FutureBuilder(
+      future: getdata(),
         builder: (context , snapshot){
           if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         }
-          List<String> MyData = [];
+        if (snapshot.data!.docs.isEmpty == true) {
+           listenFirstcard();
+          return const CircularProgressIndicator();
+        } 
+
+        List<String> MyData = [];
           List<String> MyDataID = [];
           for (var docSnapshot in  snapshot.data!.docs){
                var data = docSnapshot.data() as Map;
@@ -77,40 +89,37 @@ class _review_page extends State<review_page> {
              }
 
         if(_currentIndex > 0){
-           setreView(MyDataID[_currentIndex-1], _previusReview);
-
+           setReview(MyDataID[_currentIndex-1], _previusReview);
         }
 
-
-        
-        if(MyData.length <= _currentIndex)
+        if(MyData.length <= _currentIndex && _currentIndex != 0)
         {
-          copyReviewdCards();
+          copyReviewdCards();       
+          listener?.cancel();
           SchedulerBinding.instance.addPostFrameCallback((_) {
             Navigator.pop(context);
           },);
          
         }
         else{
-        
         return Text(MyData[_currentIndex]);
         }
-         return const Text("done");
-    }
-      );
+
+        return const Text("done");       
+    
+      }
+    );
   }
   
-    void copyReviewdCards(){
-      
+    void copyReviewdCards(){  
       getdata().then((QSnapshot) => {copyReviewdCardsAsist2(QSnapshot)});
-      
     }
 
     void copyReviewdCardsAsist2(QuerySnapshot QSnapshot)
     {
       int reviewHost = 0;
       int reviewGuest = 0;
-      
+
       for (var docSnapshot in  QSnapshot.docs){
                var data = docSnapshot.data() as Map;
                for (var i in data.entries)
@@ -161,13 +170,6 @@ class _review_page extends State<review_page> {
             });
    }
 
-  
-    
-  
-  
-
-  
-  
 
  @override
   Widget build(BuildContext context) {

@@ -64,11 +64,11 @@ class _HomePageState extends State<HomePage>
                       child:InkWell(
                         onTap: () {
                             
-                            copyDeck(MyDataID[index]);
-                            Navigator.push(
+                            copyDeck(MyDataID[index]).then((value) => {Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => review_page()),
-                            );
+                            )});
+                            
                           },
                         child: Center(child: Text(MyData[index])),
                      
@@ -82,8 +82,9 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<void> copyDeckAsisit(QuerySnapshot cards) async {
+      globals.UploadDone = false;
       for (var docs in  cards.docs.cast()){
-
+            
             Map<String, dynamic> MyMap = {};
             for (var i in (docs.data() as Map).entries){
               MyMap.addAll({i.key : i.value});
