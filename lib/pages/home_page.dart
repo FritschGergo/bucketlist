@@ -82,7 +82,6 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<void> copyDeckAsisit(QuerySnapshot cards) async {
-      globals.UploadDone = false;
       for (var docs in  cards.docs.cast()){
             
             Map<String, dynamic> MyMap = {};

@@ -22,26 +22,35 @@ class _WidgetTreeState extends State<WidgetTree>{
   void loadGlobalAsist(DocumentSnapshot doc)
   {
     Map data = doc.data() as Map;
-    
-    for (var entrie in data.entries ){
-      if (entrie.key == "partner") globals.partnerUID = entrie.value;
-      if (entrie.key == "host") globals.host = entrie.value;
-     
+    if (data["host"] == 2)
+    {
+      globals.UID = globals.UID = data["partner"];
+      globals.host = 2;
+      db.collection("users").doc(data["partner"]).get().then((DocumentSnapshot doc) => {
+        loadGlobalAsist2(doc)
+      });
+    }
+    if (data["host"] == 1)
+    {
+      globals.UID = globals.UID = user!.uid;
+      globals.host = 1;
+      loadGlobalAsist2(doc);
+      
     }
     
-    if (globals.host == 2) {
-      globals.UID = globals.partnerUID;
-    }
-    else{
-      globals.UID = user!.uid;
-    }
-
   }
 
-  Future<void> loadGlobal()async {
+   loadGlobalAsist2(DocumentSnapshot<Object?> doc) {
+      Map data = doc.data() as Map;
+      globals.HerNinckName = data["HerNinckName"];
+      globals.HisNinckName = data["HisNinckName"];
+
+   }
+
+  void loadGlobal() {
     if (globals.host == 0){
       
-      await db.collection("users").doc("${user?.uid}").get().then((DocumentSnapshot doc) => {
+      db.collection("users").doc("${user?.uid}").get().then((DocumentSnapshot doc) => {
         loadGlobalAsist(doc),
         
       });
@@ -66,3 +75,5 @@ class _WidgetTreeState extends State<WidgetTree>{
       );
   }
 }
+
+

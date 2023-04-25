@@ -82,7 +82,8 @@ class _review_page extends State<review_page> {
                for (var i in data.entries)
                {
                 if (i.key == "text") {
-                  MyData.add(i.value.toString());
+                  String str = i.value.toString().replaceAll("(her name)", globals.HerNinckName).replaceAll("(his name)", globals.HisNinckName);
+                  MyData.add(str);
                   MyDataID.add(docSnapshot.id);
                 }
                }
