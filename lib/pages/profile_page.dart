@@ -33,7 +33,7 @@ class ProfilePage extends StatelessWidget {
   }
 
   Future<void> copyUid() async {
-    await Clipboard.setData(ClipboardData(text: user!.uid + globals.HerNinckName + globals.HisNinckName ));
+    await Clipboard.setData(ClipboardData(text: user!.uid));
     
   }
 

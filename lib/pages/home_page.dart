@@ -25,13 +25,16 @@ class _HomePageState extends State<HomePage>
   Future<QuerySnapshot<Object?>> getdata(String deck) async {
    
    QuerySnapshot cards = await db.collection("decks")
-    .where("name",isEqualTo: deck).get();
+    .where("type",isEqualTo: deck).get();
     
     return cards;
   }
 
 
   Widget MyGridViewWidget(String deck){
+    setState(() {
+      
+    });
     return FutureBuilder(
       future: getdata(deck),
       builder: (context , snapshot){
@@ -121,7 +124,7 @@ class _HomePageState extends State<HomePage>
     super.initState();
     
     _tabController = TabController(
-      length: 4, 
+      length: 3, 
       vsync: this);
   }
 
@@ -135,19 +138,15 @@ class _HomePageState extends State<HomePage>
           tabs: const <Widget>[
             Tab(
               child: 
-                Text("Date Ideas")
+                Text("Könnyed")
             ),
             Tab(
               child: 
-                Text("2"),
+                Text("Huncut"),
             ),
             Tab(
               child: 
-                Text("3"),
-            ),
-            Tab(
-              child: 
-                Text("4"),
+                Text("Extrém"),
             ),
             
           ],
@@ -157,17 +156,13 @@ class _HomePageState extends State<HomePage>
           controller: _tabController,
           children: [
           Center(
-            child:  MyGridViewWidget("valami")
+            child:  MyGridViewWidget("light")
           ),
           Center(
-            child:  MyGridViewWidget("wishList")
+            child:  MyGridViewWidget("medium")
           ),
           Center(
-            child:  MyGridViewWidget("bucketList")
-          
-          ),
-          Center(
-            child:  MyGridViewWidget("bucketList")
+            child:  MyGridViewWidget("extreme")
           
           ),
         ],

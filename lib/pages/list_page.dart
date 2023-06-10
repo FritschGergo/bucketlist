@@ -1,8 +1,10 @@
+import 'package:bucketlist/pages/review_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../auth.dart';
 import '../globals.dart' as globals;
+import 'add_card.dart';
 
 
 class listPage extends StatefulWidget {
@@ -61,21 +63,39 @@ class _listPageState extends State<listPage>
                }
              }
             
-        return  GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    crossAxisCount: 2,
-                   ),
-                   itemCount: MyData.length,
-                   itemBuilder: (BuildContext context, int index) {
-                  return Card(
-                     color: Colors.red,
-                     child: Center(child: Text(MyData[index])),
-                                    
-                  );
-                }
-             );
+        return  Scaffold(
+          body: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      crossAxisCount: 2,
+                     ),
+                     itemCount: MyData.length,
+                     itemBuilder: (BuildContext context, int index) {
+                    return Card(
+                       color: Colors.red,
+                       child: Center(child: Text(MyData[index])),
+                                      
+                    );
+                  }
+               ),
+               floatingActionButton: deck == "BucketList" // Check if "BucketList" tab is active
+        ? FloatingActionButton(
+            onPressed: () async {
+              await Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => add_card()),
+                            );
+                            setState(() {
+                              
+                            });
+            },
+            child: Icon(Icons.add),
+          )
+        : null, // Hide FloatingActionButton for other tabs
+    floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+
+        );
         } 
         
       );
@@ -103,7 +123,7 @@ class _listPageState extends State<listPage>
           tabs: const <Widget>[
             Tab(
               child: 
-                Text("Bucket list")
+                Text("Bucket List"),
             ),
             Tab(
               child: 
@@ -115,7 +135,7 @@ class _listPageState extends State<listPage>
             ),
             Tab(
               child: 
-                Text("Places/Toys"),
+                Text("Ideas"),
             ),
             
           ],
@@ -126,6 +146,7 @@ class _listPageState extends State<listPage>
           children: [
           Center(
             child:  MyGridViewWidget("BucketList")
+            
           ),
           Center(
             child: MyGridViewWidget("WishList")
@@ -139,7 +160,13 @@ class _listPageState extends State<listPage>
           
           ),
         ],
-        )
-    );
+        ),
+         // Set the location of the FloatingActionButton
+         
+  );
+    
+    
   }
+
+  
 }
