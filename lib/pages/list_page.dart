@@ -1,4 +1,6 @@
 //import 'package:bucketlist/pages/review_page.dart';
+import 'package:bucketlist/pages/review_page.dart';
+import 'package:bucketlist/pages/view_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -23,15 +25,14 @@ class _listPageState extends State<listPage>
   final User? user = Auth().correntUser;
 
   Future<QuerySnapshot<Object?>> getdata(String deck) async {
-
-  
-   
+    
    QuerySnapshot mydata = await db.collection("users").doc(globals.UID).collection("savedDecks")
     .where("name",isEqualTo: deck).get();
     QuerySnapshot cards = await db.collection("users").doc(globals.UID).collection("savedDecks").doc(mydata.docs.first.id)
     .collection("cards").where("list",isEqualTo: true).get();
     
     return cards;
+
   }
 
 
@@ -53,14 +54,14 @@ class _listPageState extends State<listPage>
           return const CircularProgressIndicator();
         }
         List<String> MyData = [];
+        List<String> MyDataID = [];
+
           for (var docSnapshot in  snapshot.data!.docs){
                var data = docSnapshot.data() as Map;
-               for (var i in data.entries)
-               {
-                if (i.key == "text") {
-                  MyData.add(i.value.toString());
-              }
-               }
+               MyData.add(data["text"].toString());
+               MyDataID.add(docSnapshot.id);
+
+               
              }
             
         return  Scaffold(
@@ -73,10 +74,25 @@ class _listPageState extends State<listPage>
                      itemCount: MyData.length,
                      itemBuilder: (BuildContext context, int index) {
                     return Card(
-                       color: Colors.red,
-                       child: Center(child: Text(MyData[index])),
-                                      
-                    );
+                       child:InkWell(
+                          onTap: () async {
+                            globals.CardText = MyData[index];
+                            globals.Deck = deck;
+                           await Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => view_card()),
+                            );
+                            setState(() {
+                              
+                            });
+                            
+                          },
+                        child: Center(child: Text(MyData[index])),
+
+
+                       )              
+                      );
+                    
                   }
                ),
                floatingActionButton: deck == "BucketList" // Check if "BucketList" tab is active

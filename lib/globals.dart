@@ -5,3 +5,7 @@ String GuestUID = "";
 String UID = "";
 String HisNinckName = "";
 String HerNinckName = "";
+String CardText = "";
+String Deck = "";
+
+
