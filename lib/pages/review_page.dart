@@ -17,7 +17,7 @@ class _review_page extends State<review_page> {
 
   FirebaseFirestore db = FirebaseFirestore.instance;
   final User? user = Auth().correntUser;
-  int _currentIndex = 0;
+  int index = 0;
   
 
   List<Map> MyData = [];
@@ -25,8 +25,8 @@ class _review_page extends State<review_page> {
   void _incrementIndex() {
     
     setState(() {
-      _currentIndex++;
-      if (_currentIndex >= MyData.length -1 ){
+      index++;
+      if (index >= MyData.length -1 ){
         Navigator.pop(context);
         Navigator.pop(context);
       }
@@ -35,7 +35,7 @@ class _review_page extends State<review_page> {
   }
 
   void loadData(){
-    if(_currentIndex == 0){
+    if(index == 0){
       for (var i in globals.UsersCards){
           if(i["level"] == globals.currentDeck["level"] && i["deck"] == globals.currentDeck["text"])
           { 
@@ -46,15 +46,15 @@ class _review_page extends State<review_page> {
       }  
   }
 
-  Future<void> updateReview(String list, int i) async {
+  Future<void> updateReview(String list, int i, int index2) async {
 
-    await db.collection("users").doc(globals.UID).collection("savedCards").doc(MyData[_currentIndex]["id"])
+    await db.collection("users").doc(globals.UID).collection("savedCards").doc(MyData[index2]["id"])
     .update({"list" : list});
-    globals.UsersCards[i]["lsit"] = list;
+    globals.UsersCards[i]["list"] = list;
 
   }
 
-  Future<void> setReview(int vote) async {
+  Future<void> setReview(int vote, int index2) async {
     String myHost = "hostReview";
     String myGuest = "guestReview";
     if(globals.host == 2)
@@ -63,10 +63,10 @@ class _review_page extends State<review_page> {
       myGuest = "hostReview";
     }
 
-    await db.collection("users").doc(globals.UID).collection("savedCards").doc(MyData[_currentIndex]["id"]).update({myHost : vote});
+    await db.collection("users").doc(globals.UID).collection("savedCards").doc(MyData[index2]["id"]).update({myHost : vote});
     
     for(int i = 0; i < globals.UsersCards.length; i++){
-      if(MyData[_currentIndex]["id"] == globals.UsersCards[i]["id"])
+      if(MyData[index2]["id"] == globals.UsersCards[i]["id"])
       {
         globals.UsersCards[i][myHost] = vote;
         if(globals.UsersCards[i][myGuest] != 0)
@@ -76,30 +76,36 @@ class _review_page extends State<review_page> {
       
                 if(reviewHost == 4 || reviewGuest == 4){
                   //delete card 
-                  updateReview("DislikeList", i);
+                  updateReview("DislikeList", i, index2);
+                  break;
                   
                 }
                 else if(reviewHost == 3 || reviewGuest == 3){
                   //later deck
-                  updateReview("LaterList", i);
+                  updateReview("LaterList", i, index2);
+                  break;
                 }
                 else if(reviewHost == 1 && reviewGuest == 1){
                   //Bucket List deck
-                  updateReview("BucketList", i);
+                  updateReview("BucketList", i, index2);
+                  break;
                   
                 }
                 else if(reviewHost == 2 && reviewGuest == 2){
                   //ideas card 
-                  updateReview("IdeasList", i);
+                  updateReview("IdeasList", i, index2);
+                  break;
                   
                 }
                 else if(reviewHost == 1 && reviewGuest == 2){
                   //Host Wishes deck
-                  updateReview("HostWishList", i);
+                  updateReview("HostWishList", i, index2);
+                  break;
                 }
                 else if(reviewHost == 2 && reviewGuest == 1){
                   //Host Guest deck
-                  updateReview("GuestWishList", i);
+                  updateReview("GuestWishList", i, index2);
+                  break;
                 }
 
 
@@ -121,22 +127,22 @@ class _review_page extends State<review_page> {
   
   
   void _button0() {
-    setReview(1);
+    setReview(1, index);
     _incrementIndex();
   }
 
   void _button1() {
-    setReview(2);
+    setReview(2, index);
     _incrementIndex();
   }
 
   void _button2() {
-    setReview(3);
+    setReview(3, index);
     _incrementIndex();
   }
 
   void _button3() {
-    setReview(4);
+    setReview(4, index);
     _incrementIndex();
   }
   
@@ -156,7 +162,7 @@ class _review_page extends State<review_page> {
                 width: double.infinity,
                 height: double.infinity,
                 child: Center(
-                  child: Text(MyData[_currentIndex]["text"]),
+                  child: Text(MyData[index]["text"]),
                                       //style: TextStyle(fontSize: 24.0),
                   ),
                 ),
