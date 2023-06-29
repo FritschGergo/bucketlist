@@ -1,27 +1,15 @@
-import 'dart:js';
-
+import 'package:bucketlist/loadData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+//import 'package:flutter/scheduler.dart';
 import '../globals.dart' as globals;
-
-import '../auth.dart';
+//import '../auth.dart';
 
 class view_card extends StatelessWidget {
   FirebaseFirestore db = FirebaseFirestore.instance;
-  late String DeckID;
-  late String CardID;
-
-
-  Future<Map<String, dynamic>> getdata() async {
-    QuerySnapshot cards = await db.collection("users").doc(globals.UID).collection("savedDecks")
-    .where("name",isEqualTo:globals.Deck).get();
-    DeckID = cards.docs.first.id;
-    final card = await db.collection("users").doc(globals.UID).collection("savedDecks").doc(cards.docs.first.id).collection("cards").where("text", isEqualTo: globals.CardText).get();
-    CardID = card.docs.first.id;
-    return card.docs.first.data();
-  }
+  int index = 0;
+  bool pop = false;
 
   _showDeleteConfirmation(BuildContext context){
     showDialog(
@@ -33,7 +21,7 @@ class view_card extends StatelessWidget {
             TextButton(
               child: Text('Delete'),
               onPressed: () {
-                copyCard(globals.Deck, "delete");
+                changeDeck("delete");
                 Navigator.pop(context);
                 
               },
@@ -60,7 +48,7 @@ class view_card extends StatelessWidget {
             TextButton(
               child: Text('Done'),
               onPressed: () {
-                copyCard(globals.Deck, "DoneList");
+                changeDeck("DoneList");
                 Navigator.pop(context);
               },
             ),
@@ -89,28 +77,28 @@ class view_card extends StatelessWidget {
               ListTile(
                 title: Text('Bucket List'),
                 onTap: () {
-                  copyCard(globals.Deck, "BucketList");
+                  changeDeck("BucketList");
                   Navigator.pop(context);
                 },
               ),
               ListTile(
                 title: Text('Idea'),
                 onTap: () {
-                  copyCard(globals.Deck, "IdeasList");
+                  changeDeck("IdeasList");
                   Navigator.pop(context);
                 },
               ),
               ListTile(
                 title: Text('Her Wish List'),
                 onTap: () {
-                  copyCard(globals.Deck, "HostWishList");
+                  changeDeck("HostWishList");
                   Navigator.pop(context);
                 },
               ),
               ListTile(
                 title: Text('His Wish List'),
                 onTap: () {
-                  copyCard(globals.Deck, "GuestWishList");
+                  changeDeck("GuestWishList");
                   Navigator.of(context).pop();
                 },
               ),
@@ -130,49 +118,21 @@ class view_card extends StatelessWidget {
   }
 
   Widget textLoad() {
-    return FutureBuilder(
-      future: getdata(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+        
+        for(int i = 0; i <= globals.UsersCards.length; i++){
+          if(globals.UsersCards[i]["id"] == globals.currentCardID){
+            index = i;
+            return Text(globals.UsersCards[i]["text"].toString());
+          }
+        
         }
-        
-        Map MyMap = snapshot.data as Map;
-        
-        return Text(MyMap["text"].toString());
-        
-      },
-    );
+        return const Text("Error");   
   }
 
-  void copyCard(String fromDeck, String whereDeck)
-  {
-   getdata().then((snaphot) => {copyCardAsisit(snaphot,fromDeck,whereDeck)});
-  }
-
-  Future<void> copyCardAsisit(Map<String, dynamic> snaphot, String fromDeck, String whereDeck) async {
-
-  if(whereDeck != fromDeck){ 
-    if(whereDeck == "delete")
-    {
-      await db.collection("users").doc(globals.UID).collection("savedDecks").doc(DeckID)
-              .collection("cards").doc(CardID).delete();
-              //.then((value) =>  Navigator.pop(context as BuildContext));
-    }
-    else{
-
-      await db.collection("users").doc(globals.UID).collection("savedDecks")
-      .where("name",isEqualTo: whereDeck).get().then((Qsnapshot) => {
-        db.collection("users").doc(globals.UID).collection("savedDecks").doc(Qsnapshot.docs.first.id)
-              .collection("cards").doc(CardID).set(snaphot).then((value) => {
-                db.collection("users").doc(globals.UID).collection("savedDecks").doc(DeckID)
-                  .collection("cards").doc(CardID).delete()
-                    //.then((value) =>  Navigator.pop(context as BuildContext)),
-              })
-
-      });
-    }
-    }     
+  Future<void> changeDeck(String ToDeck) async {
+    await db.collection("users").doc(globals.UID).collection("savedCards").doc(globals.currentCardID).update({"list" : ToDeck});
+    globals.UsersCards[index]["list"] = ToDeck;
+   
   }
 
 

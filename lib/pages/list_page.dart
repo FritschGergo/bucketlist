@@ -24,18 +24,6 @@ class _listPageState extends State<listPage>
   FirebaseFirestore db = FirebaseFirestore.instance;
   final User? user = Auth().correntUser;
 
-  Future<QuerySnapshot<Object?>> getdata(String deck) async {
-    
-   QuerySnapshot mydata = await db.collection("users").doc(globals.UID).collection("savedDecks")
-    .where("name",isEqualTo: deck).get();
-    QuerySnapshot cards = await db.collection("users").doc(globals.UID).collection("savedDecks").doc(mydata.docs.first.id)
-    .collection("cards").where("list",isEqualTo: true).get();
-    
-    return cards;
-
-  }
-
-
   Widget MyGridViewWidget(String deck){
     if(deck == "WishList"){
       if(globals.host == 2)
@@ -46,24 +34,15 @@ class _listPageState extends State<listPage>
         deck = "GuestWishList";
       }
     }
+        List<Map> MyData = [];
 
-    return FutureBuilder(
-      future: getdata(deck),
-      builder: (context , snapshot){
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+        for (Map i in globals.UsersCards)
+        {
+          if(i["list"] == deck){
+            MyData.add(i);
+          }
         }
-        List<String> MyData = [];
-        List<String> MyDataID = [];
-
-          for (var docSnapshot in  snapshot.data!.docs){
-               var data = docSnapshot.data() as Map;
-               MyData.add(data["text"].toString());
-               MyDataID.add(docSnapshot.id);
-
-               
-             }
-            
+                         
         return  Scaffold(
           body: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -76,8 +55,7 @@ class _listPageState extends State<listPage>
                     return Card(
                        child:InkWell(
                           onTap: () async {
-                            globals.CardText = MyData[index];
-                            globals.Deck = deck;
+                            globals.currentCardID = MyData[index]["id"];
                            await Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => view_card()),
@@ -87,7 +65,7 @@ class _listPageState extends State<listPage>
                             });
                             
                           },
-                        child: Center(child: Text(MyData[index])),
+                        child: Center(child: Text(  MyData[index]["text"])),
 
 
                        )              
@@ -112,13 +90,8 @@ class _listPageState extends State<listPage>
     floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
         );
-        } 
-        
-      );
+      
   }
-
- 
-  
 
   @override
   void initState() {

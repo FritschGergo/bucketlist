@@ -1,10 +1,10 @@
-// ignore_for_file: sort_child_properties_last, prefer_const_constructors
-
+import 'package:bucketlist/loadData.dart';
 import 'package:bucketlist/pages/list_page.dart';
 import 'package:bucketlist/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:bucketlist/pages/home_page.dart';
 import 'package:bucketlist/pages/message_page.dart';
+import '../globals.dart' as globals;
 
 class NavigationPage extends StatelessWidget {
   NavigationPage({Key? key}) : super(key: key);
@@ -48,6 +48,18 @@ class _MyNavigationPageState extends State<MyNavigationPage> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
+        if (globals.host <= 0 || globals.inprogress) {
+          if (!globals.inprogress)
+          {
+            LoadMyData().loadGlobals();
+            globals.inprogress = true;
+          }
+          Future.delayed(Duration(milliseconds: 100)).then((value) =>
+           setState(() {
+          })); 
+          
+         //return const CircularProgressIndicator();
+        }
     return Scaffold(
       bottomNavigationBar: Container(
         
@@ -63,7 +75,7 @@ class _MyNavigationPageState extends State<MyNavigationPage> with SingleTickerPr
           child: TabBar(
             controller: _controller,
             unselectedLabelColor: Colors.black,
-            // ignore: prefer_const_literals_to_create_immutables
+           
             tabs: [
               Tab(
                 icon: Icon(Icons.home),
@@ -96,8 +108,9 @@ class _MyNavigationPageState extends State<MyNavigationPage> with SingleTickerPr
 
 
       );
-    
-  }
+      }
+  
+  
 }
 
 

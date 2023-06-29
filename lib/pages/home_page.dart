@@ -1,4 +1,4 @@
-import 'package:bucketlist/pages/review_page.dart';
+import 'package:bucketlist/pages/view_card_home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,48 +13,94 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-
 class _HomePageState extends State<HomePage>
     with TickerProviderStateMixin {
 
   late TabController _tabController;
   FirebaseFirestore db = FirebaseFirestore.instance;
   final User? user = Auth().correntUser;
-  
 
-  Future<QuerySnapshot<Object?>> getdata(String deck) async {
-   
-   QuerySnapshot cards = await db.collection("decks")
-    .where("type",isEqualTo: deck).get();
+  List<Map> loadData(int level) {
     
-    return cards;
+    List<Map> MyData = [];
+    String myHost = "hostReview";
+    List<String> newDeck = [];
+    List<String> ownedDeck= [];
+    List<String> Deck = [];
+    
+    
+    if(globals.host == 2)
+    {
+      myHost = "guestReview";
+    }
+    
+    for(var i in globals.UsersCards)
+    {   
+      if(i["level"] == level)
+        {
+          if(i[myHost] == 0){
+            if(!newDeck.contains(i["deck"].toString()))
+            {
+              newDeck.add(i["deck"].toString());
+            }
+          }
+
+          if(!ownedDeck.contains(i["deck"].toString()))
+          {
+              ownedDeck.add(i["deck"].toString());
+          }
+      }
+    }
+    for (var i in globals.GlobalCards){
+     if(!Deck.contains(i["deck"].toString()) && i["level"] == level)
+        {
+              Deck.add(i["deck"].toString());
+        }
+    }
+    
+    for (var i in newDeck)
+    {
+        MyData.add({
+            "text": i,
+            "color": 0,
+            "level" : level
+          });
+    }
+        
+    for (var i in Deck)
+    {
+      if(!ownedDeck.contains(i)){
+        MyData.add({
+          "text"  : i,
+          "color" : 1,
+          "level" : level
+        });
+      } 
+    }
+
+    for (var i in ownedDeck)
+    {
+      if(!newDeck.contains(i))
+      {
+          MyData.add({
+            "text": i,
+            "color": 0,
+            "level" : level
+      });
+
+      }
+      
+    }
+
+      
+      
+      return MyData;
   }
 
+  Widget MyGridViewWidget(int level){
+    List<Map> MyData = loadData(level);
 
-  Widget MyGridViewWidget(String deck){
-    setState(() {
-      
-    });
-    return FutureBuilder(
-      future: getdata(deck),
-      builder: (context , snapshot){
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        }
-        List<String> MyData = [];
-        List<String> MyDataID = [];
 
-          for (var docSnapshot in  snapshot.data!.docs){
-               var data = docSnapshot.data() as Map;
-               for (var i in data.entries)
-               {
-                if (i.key == "text") {
-                  MyData.add(i.value.toString());
-                  MyDataID.add(docSnapshot.id);
-                }
-               }
-             }
-            
         return  GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisSpacing: 10,
@@ -64,61 +110,26 @@ class _HomePageState extends State<HomePage>
                    itemCount: MyData.length,
                    itemBuilder: (BuildContext context, int index) {
                   return Card(
+                      
                       child:InkWell(
                         onTap: () {
+                            globals.currentDeck = MyData[index];
                             
-                            copyDeck(MyDataID[index]).then((value) => {Navigator.push(
+                            Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => review_page()),
-                            )});
+                              MaterialPageRoute(builder: (context) => ViewCardHome()),
+                            );
                             
                           },
-                        child: Center(child: Text(MyData[index])),
+                        child: Center(child: Text(MyData[index]["text"])),
                      
                       )        
                   );
                 }
              );
-        } 
         
-      );
   }
-
-  Future<void> copyDeckAsisit(QuerySnapshot cards) async {
-      for (var docs in  cards.docs.cast()){
-            
-            Map<String, dynamic> MyMap = {};
-            for (var i in (docs.data() as Map).entries){
-              MyMap.addAll({i.key : i.value});
-            }
-            db.collection("users").doc(globals.UID)
-            .collection("InProgressDecks").doc(docs.id).get().then((DocumentSnapshot DScnapshot) async => {
-              if(!DScnapshot.exists) {
-                await db.collection("users").doc(globals.UID)
-                .collection("InProgressDecks").doc(docs.id).set(MyMap)
-              },
-            
-            });
-            
-
-            
-    }
-  }
-
-  Future<void> copyDeck(String myDataID) async {
-
-    //QuerySnapshot cards = await 
-    db.collection("decks").doc(myDataID).collection("cards")
-      .where("list", isEqualTo: true).get().then((QuerySnapshot cards) => {
-      copyDeckAsisit(cards)
-      });  
-    
-    
-  }
-
- 
   
-
   @override
   void initState() {
     super.initState();
@@ -156,13 +167,13 @@ class _HomePageState extends State<HomePage>
           controller: _tabController,
           children: [
           Center(
-            child:  MyGridViewWidget("light")
+            child:  MyGridViewWidget(0)
           ),
           Center(
-            child:  MyGridViewWidget("medium")
+            child:  MyGridViewWidget(1)
           ),
           Center(
-            child:  MyGridViewWidget("extreme")
+            child:  MyGridViewWidget(2)
           
           ),
         ],

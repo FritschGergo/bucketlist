@@ -1,7 +1,6 @@
+import 'package:bucketlist/loadData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-//import '../auth.dart';
 import '../globals.dart' as globals;
 
 
@@ -27,14 +26,15 @@ class _add_cardState extends State<add_card>
   }
 
   Future<void> _onSubmitPressed() async {
-     QuerySnapshot mydata = await db.collection("users").doc(globals.UID).collection("savedDecks")
-      .where("name",isEqualTo: "BucketList").get();
+    Map<String , dynamic> MyMap = {
+      "toList" : true ,
+       "text" : _textEditingController.text,
+       "list" : "BucketList" ,
+       };
 
-    await db.collection("users").doc(globals.UID).collection("savedDecks").doc(mydata.docs.first.id)
-            .collection("cards").add({"list" : true , "text" : _textEditingController.text}).then((value) => { Navigator.of(context).pop()});
-            
-
-    
+    await db.collection("users").doc(globals.UID).collection("savedCards").add(MyMap);
+    LoadMyData().loadCards().then((value) => Navigator.of(context).pop());
+  
   }
 
 
