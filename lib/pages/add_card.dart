@@ -26,10 +26,23 @@ class _add_cardState extends State<add_card>
   }
 
   Future<void> _onSubmitPressed() async {
+    String myHost = "hostReview";
+    String myGuest = "guestReview";
+    if(globals.host == 2)
+    {
+      myHost = "guestReview";
+      myGuest = "hostReview";
+    }
+
     Map<String , dynamic> MyMap = {
       "toList" : true ,
-       "text" : _textEditingController.text,
-       "list" : "BucketList" ,
+      "text" : _textEditingController.text,
+      "list" : "BucketList" ,
+      "level": 0,
+      "deck": "Own deck",
+      myHost: 1,
+      myGuest: 0,
+        
        };
 
     await db.collection("users").doc(globals.UID).collection("savedCards").add(MyMap);

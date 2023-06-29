@@ -21,7 +21,7 @@ class view_card extends StatelessWidget {
             TextButton(
               child: Text('Delete'),
               onPressed: () {
-                changeDeck("delete");
+                changeDeck("DislikeList");
                 Navigator.pop(context);
                 
               },
