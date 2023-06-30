@@ -27,6 +27,7 @@ class _HomePageState extends State<HomePage>
     List<String> newDeck = [];
     List<String> ownedDeck= [];
     List<String> Deck = [];
+    bool laterList = false;
     
     
     if(globals.host == 2)
@@ -35,7 +36,12 @@ class _HomePageState extends State<HomePage>
     }
     
     for(var i in globals.UsersCards)
-    {   
+    { 
+      if(i["list"].toString() == "LaterList")
+      {
+        laterList = true;
+      }
+
       if(i["level"] == level)
         {
           if(i[myHost] == 0){
@@ -66,7 +72,6 @@ class _HomePageState extends State<HomePage>
             "level" : level
           });
     }
-        
     for (var i in Deck)
     {
       if(!ownedDeck.contains(i)){
@@ -77,24 +82,39 @@ class _HomePageState extends State<HomePage>
         });
       } 
     }
-
+    if (laterList){
+          MyData.add({
+                "text": "LaterList",
+                "color": 2,
+                "level" : level
+          });
+    }
     for (var i in ownedDeck)
     {
       if(!newDeck.contains(i))
       {
           MyData.add({
             "text": i,
-            "color": 0,
+            "color": 2,
             "level" : level
-      });
-
-      }
-      
+          });
+      }    
     }
+    
+    return MyData;
+  }
 
-      
-      
-      return MyData;
+  Color? myColor(int c){
+    if(c == 0)
+    {
+      return Colors.blue[300];
+    }
+    if(c == 1)
+    {
+      return Colors.red[800];
+    }
+    return Colors.black12;
+    
   }
 
   Widget MyGridViewWidget(int level){
@@ -111,6 +131,7 @@ class _HomePageState extends State<HomePage>
                    itemBuilder: (BuildContext context, int index) {
                   return Card(
                       
+                      color: myColor(MyData[index]["color"]),
                       child:InkWell(
                         onTap: () {
                             globals.currentDeck = MyData[index];

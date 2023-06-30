@@ -9,7 +9,7 @@ import '../globals.dart' as globals;
 class view_card extends StatelessWidget {
   FirebaseFirestore db = FirebaseFirestore.instance;
   int index = 0;
-  bool pop = false;
+ 
 
   _showDeleteConfirmation(BuildContext context){
     showDialog(

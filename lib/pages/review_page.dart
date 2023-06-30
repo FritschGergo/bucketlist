@@ -36,8 +36,12 @@ class _review_page extends State<review_page> {
 
   void loadData(){
     if(index == 0){
+      
+
+
       for (var i in globals.UsersCards){
-          if(i["level"] == globals.currentDeck["level"] && i["deck"] == globals.currentDeck["text"])
+          if((i["level"] == globals.currentDeck["level"] && i["deck"] == globals.currentDeck["text"]) ||
+          globals.currentDeck["text"] == i["list"])           //  ==> Nem egyezhet meg semilyen list semilyn deck nevével!!!
           { 
             MyData.add(i);
           }

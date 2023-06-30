@@ -61,7 +61,9 @@ class LoadMyData{
       globals.host = 2;
       db.collection("users").doc(data["partner"]).get().then((DocumentSnapshot doc) => {
         loadGlobalAsist2(doc)
+      
       });
+      globals.token = data["guestToken"];
     } 
 
     if (data["host"] == 1)
@@ -69,7 +71,7 @@ class LoadMyData{
       globals.UID = user!.uid;
       globals.host = 1;
       loadGlobalAsist2(doc);
-      
+      globals.token = data["hostToken"];
     }
     
     LoadMyData().loadCards().then((value) => {

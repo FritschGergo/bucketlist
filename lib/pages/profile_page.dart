@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../globals.dart' as globals;
 import 'add_partner.dart';
+import 'erarnToken.dart';
 
 class ProfilePage extends StatelessWidget {
   ProfilePage({Key? key}) : super(key: key);
@@ -37,6 +38,21 @@ class ProfilePage extends StatelessWidget {
     
   }
 
+   Widget ErnTokenbButton(BuildContext context){
+    return ElevatedButton(
+      onPressed: () {
+                Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) =>  earnToken()),
+                            );
+              },
+      child: const Text('Earn token'));
+      
+  }
+
+   Widget tokenDisplay() {
+    return Text("You have ${globals.token} token");
+   }
   
 
 
@@ -53,12 +69,14 @@ class ProfilePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               _userUid(),
+              tokenDisplay(),
               _signOutButton(),
               ElevatedButton(onPressed:  () { Navigator.of(context).
                   push( MaterialPageRoute(builder: (context) => add_partner()));
                       },
                      child: const Text('Add')),
               _CopyUidButton(),
+              ErnTokenbButton(context),
       
     
   
