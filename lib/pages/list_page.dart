@@ -65,7 +65,7 @@ class _listPageState extends State<listPage>
                             });
                             
                           },
-                        child: Center(child: Text(  MyData[index]["text"])),
+                        child: Center(child: Text(  MyData[index][globals.language])),
 
 
                        )              
@@ -109,22 +109,22 @@ class _listPageState extends State<listPage>
         toolbarHeight: 0,
         bottom: TabBar(
           controller: _tabController,
-          tabs: const <Widget>[
+          tabs: <Widget>[
             Tab(
               child: 
-                Text("Bucket List"),
+                Text(globals.languageMap["listBucketList"].toString()),
             ),
             Tab(
               child: 
-                Text("Surprise"),
+                Text(globals.languageMap["listSurprise"].toString()),
             ),
             Tab(
               child: 
-                Text("Done"),
+                Text(globals.languageMap["ListDone"].toString()),
             ),
             Tab(
               child: 
-                Text("Ideas"),
+                Text(globals.languageMap["ListIdea"].toString()),
             ),
             
           ],

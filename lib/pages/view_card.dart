@@ -122,7 +122,7 @@ class view_card extends StatelessWidget {
         for(int i = 0; i <= globals.UsersCards.length; i++){
           if(globals.UsersCards[i]["id"] == globals.currentCardID){
             index = i;
-            return Text(globals.UsersCards[i]["text"].toString());
+            return Text(globals.UsersCards[i][globals.language].toString());
           }
         
         }

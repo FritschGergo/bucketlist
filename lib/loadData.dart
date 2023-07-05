@@ -1,3 +1,4 @@
+import 'dart:math';
 
 import 'package:bucketlist/widget_tree.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -87,6 +88,18 @@ class LoadMyData{
       Map data2 = doc.data() as Map;
       globals.HerNinckName = data2["HerNinckName"];
       globals.HisNinckName = data2["HisNinckName"];
+      globals.language = data2["language"];
+      loadLanguage(globals.language);
 
+  }
+  
+  Future<void> loadLanguage(String language) async {
+    await db.collection("languages").where("language" ,isEqualTo: language).get()
+        .then((QuerySnapshot qs) => {loadLanguageAssist(qs)} );
+  }
+  
+  loadLanguageAssist(QuerySnapshot<Object?> qs) {
+    var i = qs.docs.first.data() as Map<String, dynamic>;
+    globals.languageMap = i["languageMap"] as  Map<String, dynamic>;
   }
 }

@@ -41,12 +41,12 @@ class _review_page extends State<review_page> {
 
       for (var i in globals.UsersCards){
           if((i["level"] == globals.currentDeck["level"] && i["deck"] == globals.currentDeck["text"]) ||
-          globals.currentDeck["text"] == i["list"])           //  ==> Nem egyezhet meg semilyen list semilyn deck nevével!!!
+          globals.currentDeck[globals.language] == i["list"])           //  ==> Nem egyezhet meg semilyen list semilyn deck nevével!!!
           { 
             MyData.add(i);
           }
       }
-      MyData.add({"text" : "end"});
+      MyData.add({globals.language : "end"});
       }  
   }
 
@@ -166,7 +166,7 @@ class _review_page extends State<review_page> {
                 width: double.infinity,
                 height: double.infinity,
                 child: Center(
-                  child: Text(MyData[index]["text"]),
+                  child: Text(MyData[index][globals.language]),
                                       //style: TextStyle(fontSize: 24.0),
                   ),
                 ),

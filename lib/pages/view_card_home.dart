@@ -157,7 +157,7 @@ class view_card_home extends State<ViewCardHome>
                 width: double.infinity,
                 height: double.infinity,
                 child: Center(
-                  child: Text(globals.currentDeck["text"]),
+                  child: Text(globals.currentDeck["languageDeck"]),
                                       //style: TextStyle(fontSize: 24.0),
                   ),
                 ),

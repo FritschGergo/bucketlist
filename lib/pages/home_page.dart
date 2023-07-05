@@ -2,6 +2,7 @@ import 'package:bucketlist/pages/view_card_home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import '../auth.dart';
 import '../globals.dart' as globals;
 
@@ -27,8 +28,12 @@ class _HomePageState extends State<HomePage>
     List<String> newDeck = [];
     List<String> ownedDeck= [];
     List<String> Deck = [];
-    bool laterList = false;
+    List<String> newDeckLanguage = [];
+    List<String> ownedDeckLanguage= [];
+    List<String> DeckLanguage = [];
     
+
+    bool laterList = false;
     
     if(globals.host == 2)
     {
@@ -48,12 +53,14 @@ class _HomePageState extends State<HomePage>
             if(!newDeck.contains(i["deck"].toString()))
             {
               newDeck.add(i["deck"].toString());
+              newDeckLanguage.add(i["${globals.language}Deck"]);
             }
           }
 
           if(!ownedDeck.contains(i["deck"].toString()))
           {
               ownedDeck.add(i["deck"].toString());
+              ownedDeckLanguage.add(i["${globals.language}Deck"]);
           }
       }
     }
@@ -61,22 +68,25 @@ class _HomePageState extends State<HomePage>
      if(!Deck.contains(i["deck"].toString()) && i["level"] == level)
         {
               Deck.add(i["deck"].toString());
+              DeckLanguage.add(i["${globals.language}Deck"]);
         }
     }
     
-    for (var i in newDeck)
+    for (int i = 0; i < newDeck.length; i++)
     {
         MyData.add({
-            "text": i,
+            "text": newDeck[i],
+            "languageDeck" : newDeckLanguage[i],
             "color": 0,
             "level" : level
           });
     }
-    for (var i in Deck)
+    for (int i = 0; i < Deck.length; i++)
     {
-      if(!ownedDeck.contains(i)){
+      if(!ownedDeck.contains(Deck[i])){
         MyData.add({
-          "text"  : i,
+          "text"  : Deck[i],
+          "languageDeck" : DeckLanguage[i],
           "color" : 1,
           "level" : level
         });
@@ -85,16 +95,18 @@ class _HomePageState extends State<HomePage>
     if (laterList){
           MyData.add({
                 "text": "LaterList",
+                "languageDeck" : "LaterList",
                 "color": 2,
                 "level" : level
           });
     }
-    for (var i in ownedDeck)
+    for (int i = 0; i < ownedDeck.length; i++)
     {
-      if(!newDeck.contains(i))
+      if(!newDeck.contains(ownedDeck[i]))
       {
           MyData.add({
-            "text": i,
+            "text": ownedDeck[i],
+            "languageDeck" : ownedDeckLanguage[i],
             "color": 2,
             "level" : level
           });
@@ -142,7 +154,7 @@ class _HomePageState extends State<HomePage>
                             );
                             
                           },
-                        child: Center(child: Text(MyData[index]["text"])),
+                        child: Center(child: Text(MyData[index]["languageDeck"])),
                      
                       )        
                   );
@@ -167,18 +179,18 @@ class _HomePageState extends State<HomePage>
         toolbarHeight: 0,
         bottom: TabBar(
           controller: _tabController,
-          tabs: const <Widget>[
+          tabs: <Widget>[
             Tab(
               child: 
-                Text("Könnyed")
+                Text(globals.languageMap["homeLight"].toString())
             ),
             Tab(
               child: 
-                Text("Huncut"),
+                Text(globals.languageMap["homeMedium"].toString()),
             ),
             Tab(
               child: 
-                Text("Extrém"),
+                Text(globals.languageMap["homeExtreme"].toString()),
             ),
             
           ],

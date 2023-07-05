@@ -36,7 +36,7 @@ class _add_cardState extends State<add_card>
 
     Map<String , dynamic> MyMap = {
       "toList" : true ,
-      "text" : _textEditingController.text,
+      globals.language : _textEditingController.text,
       "list" : "BucketList" ,
       "level": 0,
       "deck": "Own deck",

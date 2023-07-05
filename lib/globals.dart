@@ -13,6 +13,8 @@ List<String> ownedDeck = [];
 List<String> newDeck = [];
 String currentCardID = "";
 int token = 0;
+String language = "english";
+Map<String, dynamic> languageMap = {};
 
 
 
