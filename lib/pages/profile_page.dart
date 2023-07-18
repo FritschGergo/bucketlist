@@ -77,6 +77,7 @@ class ProfilePage extends StatelessWidget {
                      child: const Text('Add')),
               _CopyUidButton(),
               ErnTokenbButton(context),
+              //nyelv választó
       
     
   

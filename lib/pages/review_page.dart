@@ -26,22 +26,15 @@ class _review_page extends State<review_page> {
     
     setState(() {
       index++;
-      if (index >= MyData.length -1 ){
-        Navigator.pop(context);
-        Navigator.pop(context);
-      }
 
     });
   }
 
   void loadData(){
     if(index == 0){
-      
-
-
       for (var i in globals.UsersCards){
           if((i["level"] == globals.currentDeck["level"] && i["deck"] == globals.currentDeck["text"]) ||
-          globals.currentDeck[globals.language] == i["list"])           //  ==> Nem egyezhet meg semilyen list semilyn deck nevével!!!
+          globals.currentDeck["text"] == i["list"])           //  ==> Nem egyezhet meg semilyen list semilyn deck nevével!!!
           { 
             MyData.add(i);
           }
@@ -73,6 +66,12 @@ class _review_page extends State<review_page> {
       if(MyData[index2]["id"] == globals.UsersCards[i]["id"])
       {
         globals.UsersCards[i][myHost] = vote;
+        if (index >= MyData.length -1 ){
+          Navigator.pop(context);
+          Navigator.pop(context);
+      }
+
+
         if(globals.UsersCards[i][myGuest] != 0)
         {
           int reviewHost = globals.UsersCards[i][myHost];
@@ -149,6 +148,33 @@ class _review_page extends State<review_page> {
     setReview(4, index);
     _incrementIndex();
   }
+
+  Color myColor(int i) {
+    String myHost = "hostReview";
+    if(globals.host == 2)
+    {
+      myHost = "guestReview";
+    }
+    if(MyData[index][myHost] == i && i != 0)
+    {
+      return Color.fromARGB(255, 110, 0, 0);
+    }
+    return Colors.red;
+    
+  }
+
+  cardOnTap() {
+    String myHost = "hostReview";
+    if(globals.host == 2)
+    {
+      myHost = "guestReview";
+    }
+    if(MyData[index][myHost] != 0)
+    {
+      _incrementIndex();
+    }
+  
+  }
   
 
  @override
@@ -162,12 +188,16 @@ class _review_page extends State<review_page> {
             fit: FlexFit.loose,
             child: Card(
               margin: EdgeInsets.all(50.0),
-              child: SizedBox(
-                width: double.infinity,
-                height: double.infinity,
-                child: Center(
-                  child: Text(MyData[index][globals.language]),
-                                      //style: TextStyle(fontSize: 24.0),
+              
+              child: InkWell(
+                onTap: cardOnTap(),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: double.infinity,
+                  child: Center(
+                    child: Text(MyData[index][globals.language]),
+                                        //style: TextStyle(fontSize: 24.0),
+                    ),
                   ),
                 ),
               ),
@@ -182,26 +212,31 @@ class _review_page extends State<review_page> {
                   FloatingActionButton(
                     heroTag: "btn1",
                     onPressed: _button0,
+                    backgroundColor: myColor(1),
                     tooltip: 'Previous',
                     child: const Icon(Icons.favorite),
                   ),
                   FloatingActionButton(
                     heroTag: "btn2",
                     onPressed: _button1,
+                    backgroundColor: myColor(2),
                     tooltip: 'Next',
                     child: const Icon(Icons.thumb_up),
                   ),
                   FloatingActionButton(
                     heroTag: "btn3",
                     onPressed: _button2,
+                    backgroundColor: myColor(3),
                     tooltip: 'Button 1',
                     child: const Icon(Icons.watch_later),
                   ),
                   FloatingActionButton(
                     heroTag: "btn0",
                     onPressed: _button3,
+                    backgroundColor: myColor(4),
                     tooltip: 'Button 2',
                     child: const Icon(Icons.thumb_down),
+                    
                   ),
               ],
             ),
@@ -211,6 +246,10 @@ class _review_page extends State<review_page> {
       
     );
   }
+  
+
+  
+  
 
   
 }

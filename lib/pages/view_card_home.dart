@@ -30,8 +30,8 @@ class view_card_home extends State<ViewCardHome>
     }  
     return ElevatedButton(
         child: Text('Open'),
-            onPressed: () {
-               Navigator.push(
+            onPressed: () async {
+               await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => review_page()),
                 );              

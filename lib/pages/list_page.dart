@@ -61,7 +61,6 @@ class _listPageState extends State<listPage>
                               MaterialPageRoute(builder: (context) => view_card()),
                             );
                             setState(() {
-                              
                             });
                             
                           },

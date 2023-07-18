@@ -145,13 +145,15 @@ class _HomePageState extends State<HomePage>
                       
                       color: myColor(MyData[index]["color"]),
                       child:InkWell(
-                        onTap: () {
+                        onTap: () async {
                             globals.currentDeck = MyData[index];
                             
-                            Navigator.push(
+                            await Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => ViewCardHome()),
                             );
+                            setState(() {
+                            });
                             
                           },
                         child: Center(child: Text(MyData[index]["languageDeck"])),
