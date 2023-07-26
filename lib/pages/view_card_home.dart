@@ -19,6 +19,7 @@ class view_card_home extends State<ViewCardHome>
     with TickerProviderStateMixin {
     FirebaseFirestore db = FirebaseFirestore.instance;
     final User? user = Auth().correntUser;
+    bool inprogress = false;
 
 
   Widget buyOpenButonn()
@@ -43,39 +44,41 @@ class view_card_home extends State<ViewCardHome>
       );
   } 
   Future<void> buyAssist(int price) async {
-    
+    setState(() {
+      inprogress = true;
+    }); 
+
     await db.collection("users").doc(user?.uid).update({"token" : FieldValue.increment(-price)});
     globals.token = globals.token - price;
 
     for (var i in globals.GlobalCards){
       if(globals.currentDeck["level"] == i["level"] && globals.currentDeck["text"] == i["deck"]){
+        
         await db.collection("users").doc(globals.UID).collection("savedCards").doc(i["id"]).set(i);
+        
         globals.UsersCards.add(i);
 
       }
-      //decrement token
-      globals.currentDeck["color"] = 0; 
-      setState(() {
-        
-      });
-    }
+      
 
+    }
+    
+    setState(() {
+      inprogress = false;
+    });          
+    globals.currentDeck["color"] = 0; 
   }
 
   void buy(){
     int price = 1;
     if(globals.token - price >= 0)
     {
-      buyAssist(price);  
-      
-      
-    }else
+      buyAssist(price); 
+    }
+    else
     {
-      
       showNoToken();
     }
-
-    
   }
 
   void showNoToken() {
@@ -141,12 +144,16 @@ class view_card_home extends State<ViewCardHome>
       },
     );
   }
-  
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
+  Widget myWidget(){
+    if(inprogress)
+    {
+      return const Center(
+       child: CircularProgressIndicator()
+      );
+    }
+
+    return Column(
         children: [
           Expanded(
             child: Container(
@@ -192,7 +199,14 @@ class view_card_home extends State<ViewCardHome>
             ],
           ),
         ],
-      ),
+      );
+  }
+  
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: myWidget()
     );
   }
   

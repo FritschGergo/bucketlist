@@ -20,11 +20,16 @@ class _review_page extends State<review_page> {
   List<Map> MyData = [];
   
   void _incrementIndex() {
-    
-    setState(() {
+    if (index >= MyData.length -1 ){
+          Navigator.pop(context);
+          Navigator.pop(context);
+        }
+    else{
+       setState(() {
       index++;
-
-    });
+      });
+    }
+   
   }
 
   void loadData(){
@@ -36,19 +41,18 @@ class _review_page extends State<review_page> {
             MyData.add(i);
           }
       }
-      MyData.add({globals.language : "end"});
       }  
   }
 
-  Future<void> updateReview(String list, int i, int index2) async {
+  Future<void> updateReview(String list, int i, int index) async {
 
-    await db.collection("users").doc(globals.UID).collection("savedCards").doc(MyData[index2]["id"])
+    await db.collection("users").doc(globals.UID).collection("savedCards").doc(MyData[index]["id"])
     .update({"list" : list});
     globals.UsersCards[i]["list"] = list;
 
   }
 
-  Future<void> setReview(int vote, int index2) async {
+  Future<void> setReview(int vote) async {
     String myHost = "hostReview";
     String myGuest = "guestReview";
     if(globals.host == 2)
@@ -57,18 +61,13 @@ class _review_page extends State<review_page> {
       myGuest = "hostReview";
     }
 
-    await db.collection("users").doc(globals.UID).collection("savedCards").doc(MyData[index2]["id"]).update({myHost : vote});
+    await db.collection("users").doc(globals.UID).collection("savedCards").doc(MyData[index]["id"]).update({myHost : vote});
     
     for(int i = 0; i < globals.UsersCards.length; i++){
-      if(MyData[index2]["id"] == globals.UsersCards[i]["id"])
+      if(MyData[index]["id"] == globals.UsersCards[i]["id"])
       {
         globals.UsersCards[i][myHost] = vote;
-        if (index >= MyData.length -1 ){
-          Navigator.pop(context);
-          Navigator.pop(context);
-      }
-
-
+        
         if(globals.UsersCards[i][myGuest] != 0)
         {
           int reviewHost = globals.UsersCards[i][myHost];
@@ -76,74 +75,71 @@ class _review_page extends State<review_page> {
       
                 if(reviewHost == 4 || reviewGuest == 4){
                   //delete card 
-                  updateReview("DislikeList", i, index2);
+                  updateReview("DislikeList", i, index);
                   break;
                   
                 }
                 else if(reviewHost == 3 || reviewGuest == 3){
                   //later deck
-                  updateReview("LaterList", i, index2);
+                  updateReview("LaterList", i, index);
                   break;
                 }
                 else if(reviewHost == 1 && reviewGuest == 1){
                   //Bucket List deck
-                  updateReview("BucketList", i, index2);
+                  updateReview("BucketList", i, index);
                   break;
                   
                 }
                 else if(reviewHost == 2 && reviewGuest == 2){
                   //ideas card 
-                  updateReview("IdeasList", i, index2);
+                  updateReview("IdeasList", i, index);
                   break;
                   
                 }
                 else if(reviewHost == 1 && reviewGuest == 2){
                   //Host Wishes deck
-                  updateReview("HostWishList", i, index2);
+                  updateReview("HostWishList", i, index);
                   break;
                 }
                 else if(reviewHost == 2 && reviewGuest == 1){
                   //Host Guest deck
-                  updateReview("GuestWishList", i, index2);
+                  updateReview("GuestWishList", i, index);
                   break;
                 }
-
-
-
         }
+        break;
         
 
       }
-
     }
-
     //i = 0   no rewiwe
     //i = 1   like
     //i = 2   ok / maybe
     //i = 3   later
     //i = 4   dislike
-
+    
+    _incrementIndex();
   }
   
   
   void _button0() {
-    setReview(1, index);
-    _incrementIndex();
+    setReview(1);
+    
   }
 
   void _button1() {
-    setReview(2, index);
-    _incrementIndex();
+    setReview(2);
+    
   }
 
   void _button2() {
-    setReview(3, index);
-    _incrementIndex();
+    setReview(3);
+    
   }
 
   void _button3() {
-    setReview(4, index);
-    _incrementIndex();
+    setReview(4);
+    
   }
 
   Color myColor(int i) {
@@ -182,21 +178,20 @@ class _review_page extends State<review_page> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Flexible(
-            fit: FlexFit.loose,
-            child: Card(
-              margin: EdgeInsets.all(50.0),
-              
-              child: InkWell(
-                onTap: cardOnTap(),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: double.infinity,
-                  child: Center(
-                    child: Text(MyData[index][globals.language]),
-                                        //style: TextStyle(fontSize: 24.0),
-                    ),
+            fit: FlexFit.tight,
+            child: GestureDetector(
+              onTap: () => cardOnTap(),
+              child: Card(
+                margin: EdgeInsets.all(50.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: double.infinity,
+                    child: Center(
+                      child: Text(MyData[index][globals.language]),
+                                          //style: TextStyle(fontSize: 24.0),
+                      ),
                   ),
-                ),
+                )
               ),
             ),
             
