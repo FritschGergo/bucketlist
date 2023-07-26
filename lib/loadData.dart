@@ -1,17 +1,21 @@
-import 'dart:math';
-
-import 'package:bucketlist/widget_tree.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../globals.dart' as globals;
+import 'auth.dart';
 
-class LoadMyData{
+class LoadMyData{ 
+  final User? user = Auth().correntUser;
+  FirebaseFirestore db = FirebaseFirestore.instance;
 
   void loadGlobals()  { 
-   if (globals.host == 0){
-      db.collection("users").doc("${user?.uid}").get().then((DocumentSnapshot doc) => {
-        loadGlobalAsist(doc),
-        
-      });
+    {
+      if (globals.host == 0 ){
+        db.collection("users").doc(user?.uid).get().then((DocumentSnapshot doc) => {
+          
+          loadGlobalAsist(doc),
+          
+        });
+      }
     }
   }
 
@@ -52,35 +56,56 @@ class LoadMyData{
      globals.UsersCards = MyDtaList;
     }
     
-   void loadGlobalAsist(DocumentSnapshot doc)
+  void loadGlobalAsist(DocumentSnapshot doc) async 
   {
-    Map data = doc.data() as Map;
-    
-    if (data["host"] == 2)
+    if (doc.exists)
     {
-      globals.UID = data["partner"];
-      globals.host = 2;
-      db.collection("users").doc(data["partner"]).get().then((DocumentSnapshot doc) => {
-        loadGlobalAsist2(doc)
-      
-      });
-      globals.token = data["guestToken"];
-    } 
+        Map data = doc.data() as Map;
+        
+        if (data["host"] == 2)
+        {
+          globals.UID = data["partner"];
+          globals.host = 2;
+          db.collection("users").doc(data["partner"]).get().then((DocumentSnapshot doc2) => {
+            loadGlobalAsist2(doc2)
+          
+          });
+          globals.token = data["token"];
+        }
 
-    if (data["host"] == 1)
-    {
+        if (data["host"] == 1)
+        {
+          globals.UID = user!.uid;
+          globals.host = 1;
+          loadGlobalAsist2(doc);
+          globals.token = data["token"];
+        }
+
+        if (data["host"] == 3) 
+        {
+          globals.host = 3;
+          globals.UID = user!.uid;
+          loadLanguage("english");
+        }
+
+        
+        loadCards().then((value) => {
+          loadGlobalCards().then((value) => {
+            
+            globals.inprogress = false,
+          })
+        });
+    }else
+    { 
       globals.UID = user!.uid;
-      globals.host = 1;
-      loadGlobalAsist2(doc);
-      globals.token = data["hostToken"];
+       await db.collection("users").doc(user?.uid).set({
+                    "host" : 3,                // guest= 0(idk) 1(host) 2(guest) 3(ready to pair)
+                    }).then((value) => loadGlobals());
+      loadLanguage(globals.language);
+      print("no data");
+
     }
     
-    LoadMyData().loadCards().then((value) => {
-      LoadMyData().loadGlobalCards().then((value) => {
-        
-        globals.inprogress = false,
-      })
-    });
   }
 
   loadGlobalAsist2(DocumentSnapshot<Object?> doc) {

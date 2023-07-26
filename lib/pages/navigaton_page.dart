@@ -35,7 +35,7 @@ class _MyNavigationPageState extends State<MyNavigationPage>
     if (globals.host <= 0 || globals.inprogress) {
       if (!globals.inprogress) {
         LoadMyData().loadGlobals();
-        globals.inprogress = true;
+         globals.inprogress = true;
       }
       Future.delayed(Duration(milliseconds: 100)).then((value) => setState(() {}));
       //return const CircularProgressIndicator();

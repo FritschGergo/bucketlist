@@ -1,7 +1,10 @@
 import 'package:bucketlist/pages/erarnToken.dart';
 import 'package:bucketlist/pages/review_page.dart';
+import 'package:bucketlist/widget_tree.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../auth.dart';
 import '../globals.dart' as globals;
 
 class ViewCardHome extends StatefulWidget {
@@ -15,6 +18,7 @@ class ViewCardHome extends StatefulWidget {
 class view_card_home extends State<ViewCardHome>
     with TickerProviderStateMixin {
     FirebaseFirestore db = FirebaseFirestore.instance;
+    final User? user = Auth().correntUser;
 
 
   Widget buyOpenButonn()
@@ -39,12 +43,8 @@ class view_card_home extends State<ViewCardHome>
       );
   } 
   Future<void> buyAssist(int price) async {
-    String myToken = "hostToken";
-    if(globals.host == 2)
-    {
-      myToken = "guestToken";
-    }
-    await db.collection("users").doc(globals.UID).update({myToken : FieldValue.increment(-price)});
+    
+    await db.collection("users").doc(user?.uid).update({"token" : FieldValue.increment(-price)});
     globals.token = globals.token - price;
 
     for (var i in globals.GlobalCards){

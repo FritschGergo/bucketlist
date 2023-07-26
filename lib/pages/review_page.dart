@@ -9,14 +9,11 @@ class review_page extends StatefulWidget {
 
   @override
   State<review_page> createState() => _review_page();
-  
-
 }
  
 class _review_page extends State<review_page> {
 
   FirebaseFirestore db = FirebaseFirestore.instance;
-  final User? user = Auth().correntUser;
   int index = 0;
   
 

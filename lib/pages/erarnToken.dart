@@ -1,10 +1,10 @@
 import 'dart:convert';
-
-import 'package:bucketlist/pages/review_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart' hide Card ;
+import '../auth.dart';
 import '../globals.dart' as globals;
 import 'package:http/http.dart' as http;
 
@@ -21,6 +21,7 @@ class _earnToken extends State<earnToken>
 
   FirebaseFirestore db = FirebaseFirestore.instance;
   Map<String, dynamic>? paymentIntent;
+  final User? user = Auth().correntUser;
     
   void buy(int price) async {
     
@@ -159,12 +160,7 @@ class _earnToken extends State<earnToken>
       newToken = 10;
     }
 
-    String myToken = "hostToken";
-    if(globals.host == 2)
-    {
-      myToken = "guestToken";
-    }
-    await db.collection("users").doc(globals.UID).update({myToken : FieldValue.increment(newToken)});
+    await db.collection("users").doc(user?.uid).update({"token" : FieldValue.increment(newToken)});
     globals.token = globals.token + newToken;
 
   }

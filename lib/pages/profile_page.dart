@@ -14,7 +14,23 @@ class ProfilePage extends StatelessWidget {
   final User? user = Auth().correntUser;
 
   Future<void> signOut() async {
-    await Auth().signOut();
+    globals.host = 0;           
+    globals.inprogress = false;
+    globals.GuestUID = "";
+    globals.UID = "";
+    globals.HisNinckName = "";
+    globals.HerNinckName = "";
+    globals.currentDeck = {};
+    globals.UsersCards = [];
+    globals.GlobalCards = [];
+    globals.ownedDeck = [];
+    globals.newDeck = [];
+    globals.currentCardID = "";
+    globals.token = 0;
+    globals.language = "english";
+    globals.languageMap = {};
+    Auth().signOut();
+
 
   }
    Widget _userUid() {
