@@ -60,7 +60,8 @@ Widget MyGridViewWidget(String deck) {
               );
               setState(() {});
             },
-            child: Center(child: Text(MyData[index][globals.language])),
+            
+            child: Center(child: Text((MyData[index][globals.language] != null)? MyData[index][globals.language] : MyData[index]["english"])),
           ),
         );
       },

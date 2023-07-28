@@ -53,14 +53,29 @@ class _HomePageState extends State<HomePage>
             if(!newDeck.contains(i["deck"].toString()))
             {
               newDeck.add(i["deck"].toString());
-              newDeckLanguage.add(i["${globals.language}Deck"]);
+              if(i["${globals.language}Deck"] != null)
+              {
+                newDeckLanguage.add(i["${globals.language}Deck"]);
+              }else
+              {
+                newDeckLanguage.add(i["englishDeck"]);
+              }
+
+              
             }
           }
 
           if(!ownedDeck.contains(i["deck"].toString()))
           {
               ownedDeck.add(i["deck"].toString());
-              ownedDeckLanguage.add(i["${globals.language}Deck"]);
+              if(i["${globals.language}Deck"] != null)
+              {
+                ownedDeckLanguage.add(i["${globals.language}Deck"]);
+              }else
+              {
+                ownedDeckLanguage.add(i["englishDeck"]);
+              }
+
           }
       }
     }
@@ -68,7 +83,14 @@ class _HomePageState extends State<HomePage>
      if(!Deck.contains(i["deck"].toString()) && i["level"] == level)
         {
               Deck.add(i["deck"].toString());
-              DeckLanguage.add(i["${globals.language}Deck"]);
+              if(i["${globals.language}Deck"] != null)
+              {
+                DeckLanguage.add(i["${globals.language}Deck"]);
+              }else
+              {
+                DeckLanguage.add(i["englishDeck"]);
+              }
+
         }
     }
     

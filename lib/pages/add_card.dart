@@ -36,7 +36,8 @@ class _add_cardState extends State<add_card>
 
     Map<String , dynamic> MyMap = {
       "toList" : true ,
-      globals.language : _textEditingController.text,
+      "english" : _textEditingController.text,
+      "englishDeck" : "Own Deck",
       "list" : "BucketList" ,
       "level": 0,
       "deck": "Own deck",
@@ -44,7 +45,6 @@ class _add_cardState extends State<add_card>
       myGuest: 0,
         
        };
-
     await db.collection("users").doc(globals.UID).collection("savedCards").add(MyMap);
     LoadMyData().loadCards().then((value) => Navigator.of(context).pop());
   
