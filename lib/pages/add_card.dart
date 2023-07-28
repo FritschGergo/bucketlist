@@ -1,5 +1,6 @@
 import 'package:bucketlist/loadData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../globals.dart' as globals;
 
@@ -13,11 +14,13 @@ class add_card extends StatefulWidget {
 class _add_cardState extends State<add_card> 
 {
   FirebaseFirestore db = FirebaseFirestore.instance;
-
-   final TextEditingController _textEditingController =
-      TextEditingController();
-
+  final TextEditingController _textEditingController = TextEditingController();
   String _inputText = '';
+
+  int level = 0;
+  List<String> levels = [globals.languageMap["homeLight"],
+                         globals.languageMap["homeMedium"],
+                         globals.languageMap["homeExtreme"]];
 
   @override
   void dispose() {
@@ -39,7 +42,7 @@ class _add_cardState extends State<add_card>
       "english" : _textEditingController.text,
       "englishDeck" : "Own Deck",
       "list" : "BucketList" ,
-      "level": 0,
+      "level": level,
       "deck": "Own deck",
       myHost: 1,
       myGuest: 0,
@@ -49,6 +52,30 @@ class _add_cardState extends State<add_card>
     LoadMyData().loadCards().then((value) => Navigator.of(context).pop());
   
   }
+  
+  void levelPick() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) => SizedBox(
+        width: double.infinity,
+        height: 250,
+        child: CupertinoPicker(
+          scrollController: FixedExtentScrollController(initialItem: level),
+          onSelectedItemChanged: (int value) async {
+            setState(() {
+              level = value;
+            });
+          },
+          itemExtent: 40, // Ezt állítsd az elemek magasságának megfelelően
+          children: [
+            Text(globals.languageMap["homeLight"]),
+            Text(globals.languageMap["homeMedium"]),
+            Text(globals.languageMap["homeExtreme"]),
+          ],
+        ),
+      ),
+    );
+    }
 
 
 
@@ -78,6 +105,16 @@ class _add_cardState extends State<add_card>
             ElevatedButton(
               onPressed: _onSubmitPressed,
               child: Text('Submit'),
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: levelPick,
+              child: Text('Change lavel'),
+            ),
+             SizedBox(height: 16.0),
+            Text(
+              'Current level: ${levels[level]}',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16.0),
             Text(

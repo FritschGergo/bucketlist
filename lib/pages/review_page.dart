@@ -187,7 +187,7 @@ class _review_page extends State<review_page> {
                     width: double.infinity,
                     height: double.infinity,
                     child: Center(
-                      child: Text(MyData[index][globals.language]),
+                      child: Text((MyData[index][globals.language] != null)? MyData[index][globals.language] : MyData[index]["english"]),
                                           //style: TextStyle(fontSize: 24.0),
                       ),
                   ),
