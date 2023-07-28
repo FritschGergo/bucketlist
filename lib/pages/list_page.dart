@@ -50,6 +50,7 @@ Widget MyGridViewWidget(String deck) {
       itemCount: MyData.length,
       itemBuilder: (BuildContext context, int index) {
         return Card(
+          color: globals.myPrimaryColor,
           child: InkWell(
             onTap: () async {
               globals.currentCardID = MyData[index]["id"];
@@ -104,6 +105,7 @@ Widget MyGridViewWidget(String deck) {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: globals.myPrimaryColor,
         toolbarHeight: 0,
         bottom: TabBar(
           controller: _tabController,
@@ -128,28 +130,31 @@ Widget MyGridViewWidget(String deck) {
           ],
         ),
       ),
-      body: TabBarView(
-          controller: _tabController,
-          children: [
-          Center(
-            child:  MyGridViewWidget("BucketList")
+      body: Container(
+          height: double.infinity,
+          width: double.infinity,
+          padding: const EdgeInsets.all(10),
+          child:TabBarView(
+            controller: _tabController,
+            children: [
+            Center(
+              child:  MyGridViewWidget("BucketList")
+              
+            ),
+            Center(
+              child: MyGridViewWidget("WishList")
+            ),
+            Center(
+              child:  MyGridViewWidget("DoneList")
             
-          ),
-          Center(
-            child: MyGridViewWidget("WishList")
-          ),
-          Center(
-            child:  MyGridViewWidget("DoneList")
-          
-          ),
-          Center(
-            child:  MyGridViewWidget("IdeasList")
-          
-          ),
-        ],
+            ),
+            Center(
+              child:  MyGridViewWidget("IdeasList")
+            
+            ),
+          ],
         ),
-         // Set the location of the FloatingActionButton
-         
+      )
   );
     
     

@@ -160,6 +160,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: globals.myPrimaryColor,
         title: _title(),
       ),
       body: Container(

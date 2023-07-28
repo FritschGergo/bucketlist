@@ -119,13 +119,13 @@ class _HomePageState extends State<HomePage>
   Color? myColor(int c){
     if(c == 0)
     {
-      return Colors.blue[300];
+      return globals.myPrimaryColor;
     }
     if(c == 1)
     {
-      return Colors.red[800];
+      return globals.mySecondaryColor;
     }
-    return Colors.black12;
+    return globals.myTertiaryColor;
     
   }
 
@@ -178,6 +178,7 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: globals.myPrimaryColor,
         toolbarHeight: 0,
         bottom: TabBar(
           controller: _tabController,
@@ -198,7 +199,12 @@ class _HomePageState extends State<HomePage>
           ],
         ),
       ),
-      body: TabBarView(
+      body:Container(
+          height: double.infinity,
+          width: double.infinity,
+          padding: const EdgeInsets.all(10),
+          child: TabBarView(
+          
           controller: _tabController,
           children: [
           Center(
@@ -213,6 +219,7 @@ class _HomePageState extends State<HomePage>
           ),
         ],
         )
+    )
     );
   }
   

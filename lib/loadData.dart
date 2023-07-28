@@ -115,6 +115,7 @@ class LoadMyData{
       globals.HisNinckName = data2["HisNinckName"];
       globals.language = data2["language"];
       loadLanguage(globals.language);
+      allLanguageLoad();
 
   }
   
@@ -126,5 +127,19 @@ class LoadMyData{
   loadLanguageAssist(QuerySnapshot<Object?> qs) {
     var i = qs.docs.first.data() as Map<String, dynamic>;
     globals.languageMap = i["languageMap"] as  Map<String, dynamic>;
+  }
+
+  Future<void> allLanguageLoad() async {
+    await db.collection("languages").where("toList" ,isEqualTo: true).get()
+        .then((QuerySnapshot qs) => {allLanguageLoadAssist(qs)} );
+  }
+
+  void allLanguageLoadAssist(QuerySnapshot<Object?> qs){
+    for (var i in qs.docs)
+    {
+      var data =i.data() as Map;
+      globals.allLanguage.add(data["language"].toString());
+
+    }
   }
 }

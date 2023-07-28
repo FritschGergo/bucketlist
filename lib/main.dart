@@ -1,8 +1,10 @@
+import 'package:bucketlist/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:bucketlist/widget_tree.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import '../globals.dart' as globals;
 
 
 void main() async{
@@ -24,8 +26,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primaryColor: globals.myPrimaryColor,
+        scaffoldBackgroundColor: globals.myBackgroundColor, 
       ),
+      darkTheme: ThemeData.dark(),
+
       home: const WidgetTree(),
     );
   }
