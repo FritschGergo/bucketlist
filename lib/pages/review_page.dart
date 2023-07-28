@@ -15,25 +15,27 @@ class _review_page extends State<review_page> {
 
   FirebaseFirestore db = FirebaseFirestore.instance;
   int index = 0;
+  int swipeDirection = 0;
   
 
   List<Map> MyData = [];
   
-  void _incrementIndex() {
+  void _incrementIndex(int i) {
     if (index >= MyData.length -1 ){
           Navigator.pop(context);
           Navigator.pop(context);
         }
-    else{
+    else if(index + i >= 0){
+
        setState(() {
-      index++;
+      index+= i;
       });
     }
    
   }
 
   void loadData(){
-    if(index == 0){
+    if(MyData.isEmpty){
       for (var i in globals.UsersCards){
           if((i["level"] == globals.currentDeck["level"] && i["deck"] == globals.currentDeck["text"]) ||
           globals.currentDeck["text"] == i["list"])           //  ==> Nem egyezhet meg semilyen list semilyn deck nevével!!!
@@ -118,7 +120,7 @@ class _review_page extends State<review_page> {
     //i = 3   later
     //i = 4   dislike
     
-    _incrementIndex();
+    _incrementIndex(1);
   }
   
   
@@ -143,6 +145,12 @@ class _review_page extends State<review_page> {
   }
 
   Color myColor(int i) {
+    if(i == swipeDirection)
+    {
+      return Colors.white;
+    }
+
+
     String myHost = "hostReview";
     if(globals.host == 2)
     {
@@ -156,7 +164,7 @@ class _review_page extends State<review_page> {
     
   }
 
-  cardOnTap() {
+  void cardOnTap() {
     String myHost = "hostReview";
     if(globals.host == 2)
     {
@@ -164,9 +172,80 @@ class _review_page extends State<review_page> {
     }
     if(MyData[index][myHost] != 0)
     {
-      _incrementIndex();
+      _incrementIndex(1);
     }
   
+  }
+
+  Widget myGestureDetector() {
+    return  GestureDetector(
+      onTap: cardOnTap,
+      onVerticalDragUpdate: (details) {
+        if (details.delta.dy < 0) {
+          // Swipe Up
+          if(swipeDirection != 2)
+          {
+            setState(() {
+               swipeDirection = 2;
+            });
+          }
+          
+        } else if (details.delta.dy > 0) {
+          // Swipe Down
+          if(swipeDirection != 3)
+          {
+            setState(() {
+               swipeDirection = 3;
+            });
+          }
+        }
+      },
+      onVerticalDragEnd: (details) {
+        // You can handle the drag end event if needed
+        if(swipeDirection == 2) _button1();
+        if(swipeDirection == 3) _button2();
+        swipeDirection = 0;
+      },
+      onHorizontalDragUpdate: (details) {
+        if (details.delta.dx < 0) {
+          // Swipe Left
+          if(swipeDirection != 4)
+          {
+            setState(() {
+               swipeDirection = 4;
+            });
+          }
+        } else if (details.delta.dx > 0) {
+          // Swipe Right
+          if(swipeDirection != 1)
+          {
+            setState(() {
+               swipeDirection = 1;
+            });
+          }
+        }
+      },
+      onHorizontalDragEnd: (details) {
+        // You can handle the drag end event if needed
+        if(swipeDirection == 1) {_button0();}
+        if(swipeDirection == 4) _button3();
+        swipeDirection = 0;
+      },
+      child: Card(
+        margin: EdgeInsets.all(50.0),
+        child: SizedBox(
+          width: double.infinity,
+          height: double.infinity,
+          child: Center(
+            child: Text(
+              (MyData[index][globals.language] != null)
+                  ? MyData[index][globals.language]
+                  : MyData[index]["english"],
+            ),
+          ),
+        ),
+      ),
+    );
   }
   
 
@@ -174,25 +253,25 @@ class _review_page extends State<review_page> {
   Widget build(BuildContext context) {
     loadData();
     return Scaffold(
+      appBar: AppBar(
+            backgroundColor: globals.myPrimaryColor,
+            toolbarHeight: 50,
+            actions: <Widget>[
+              TextButton(
+                child: Text("Previous" ,
+                style: TextStyle(fontSize: 20),),
+                onPressed: () {
+                  _incrementIndex(-1);
+                },
+              ),
+            ],
+        ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Flexible(
             fit: FlexFit.tight,
-            child: GestureDetector(
-              onTap: () => cardOnTap(),
-              child: Card(
-                margin: EdgeInsets.all(50.0),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: double.infinity,
-                    child: Center(
-                      child: Text((MyData[index][globals.language] != null)? MyData[index][globals.language] : MyData[index]["english"]),
-                                          //style: TextStyle(fontSize: 24.0),
-                      ),
-                  ),
-                )
-              ),
+            child: myGestureDetector(),
             ),
             
           SizedBox(
@@ -202,34 +281,36 @@ class _review_page extends State<review_page> {
                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   FloatingActionButton(
-                    heroTag: "btn1",
-                    onPressed: _button0,
-                    backgroundColor: myColor(1),
-                    tooltip: 'Previous',
-                    child: const Icon(Icons.favorite),
-                  ),
-                  FloatingActionButton(
-                    heroTag: "btn2",
-                    onPressed: _button1,
-                    backgroundColor: myColor(2),
-                    tooltip: 'Next',
-                    child: const Icon(Icons.thumb_up),
+                    heroTag: "btn0",
+                    onPressed: _button3,
+                    backgroundColor: myColor(4),
+                    tooltip: 'Dislike',
+                    child: const Icon(Icons.thumb_down),
                   ),
                   FloatingActionButton(
                     heroTag: "btn3",
                     onPressed: _button2,
                     backgroundColor: myColor(3),
-                    tooltip: 'Button 1',
+                    tooltip: 'Later',
                     child: const Icon(Icons.watch_later),
                   ),
                   FloatingActionButton(
-                    heroTag: "btn0",
-                    onPressed: _button3,
-                    backgroundColor: myColor(4),
-                    tooltip: 'Button 2',
-                    child: const Icon(Icons.thumb_down),
-                    
+                    heroTag: "btn2",
+                    onPressed: _button1,
+                    backgroundColor: myColor(2),
+                    tooltip: 'Like',
+                    child: const Icon(Icons.thumb_up),
                   ),
+                  FloatingActionButton(
+                    heroTag: "btn1",
+                    onPressed: _button0,
+                    backgroundColor: myColor(1),
+                    tooltip: 'Love',
+                    child: const Icon(Icons.favorite),
+                  ),
+                  
+                  
+                  
               ],
             ),
           ),
@@ -239,9 +320,6 @@ class _review_page extends State<review_page> {
     );
   }
   
-
   
-  
-
   
 }

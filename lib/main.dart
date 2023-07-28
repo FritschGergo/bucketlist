@@ -28,9 +28,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: globals.myPrimaryColor,
         scaffoldBackgroundColor: globals.myBackgroundColor,
+        buttonTheme: ButtonThemeData(
+          buttonColor: globals.myPrimaryColor
+        ),
        
       ),
-      darkTheme: ThemeData.dark(),
+      darkTheme: ThemeData.dark(
+
+      ),
       
 
       home: const WidgetTree(),
