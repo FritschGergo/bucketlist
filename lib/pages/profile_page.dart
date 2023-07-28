@@ -153,8 +153,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 String word = textEditingController.text;
                 isHe? globals.HisNinckName = word : globals.HerNinckName = word;
                 await db.collection("users").doc(globals.UID).update({
-                isHe? "HisNinckName" : "HerNinckName" : word,                                                 //frisíté!
+                isHe? "HisNinckName" : "HerNinckName" : word
+                                                         //frisíté!
               });
+                textEditingController.clear();
                 setState(() {
                   
                 });

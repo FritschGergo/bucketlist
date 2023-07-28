@@ -139,6 +139,15 @@ class view_card extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: globals.myPrimaryColor,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Column(
         children: [
           Expanded(
@@ -174,13 +183,8 @@ class view_card extends StatelessWidget {
                       Navigator.pop(context);
                     },
                   ),
-                  ElevatedButton(
-                    child: Text('Cancle'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      
-                    },
-                  ),
+                  
+                  
                 ],
               ),
               Column(

@@ -27,9 +27,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         primaryColor: globals.myPrimaryColor,
-        scaffoldBackgroundColor: globals.myBackgroundColor, 
+        scaffoldBackgroundColor: globals.myBackgroundColor,
+       
       ),
       darkTheme: ThemeData.dark(),
+      
 
       home: const WidgetTree(),
     );

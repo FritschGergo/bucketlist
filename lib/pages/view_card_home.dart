@@ -159,7 +159,7 @@ class view_card_home extends State<ViewCardHome>
             child: Container(
               width: double.infinity,
               child: Card(
-              margin: EdgeInsets.all(50.0),
+              margin: EdgeInsets.fromLTRB(50, 50, 50, 0),
               child: SizedBox(
                 width: double.infinity,
                 height: double.infinity,
@@ -171,33 +171,19 @@ class view_card_home extends State<ViewCardHome>
               ),
             ),
           ),
-          ButtonBar(
-            alignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Column(
-                children: [
-                  buyOpenButonn(),
+          SizedBox(
+            height: 200,
+            width: double.infinity,
+           child: Center(
+            child: buyOpenButonn(),)
+          )
+            
+                  
                   
                  
 
-                ],
-              ),
-              Column(
-                children: [
-
-                  
-
-                  ElevatedButton(
-                    child: Text('Cancel'),
-                    onPressed: () {
-                      
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
+            
+          
         ],
       );
   }
@@ -206,6 +192,15 @@ class view_card_home extends State<ViewCardHome>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: globals.myPrimaryColor,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: myWidget()
     );
   }
