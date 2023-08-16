@@ -44,13 +44,16 @@ class _ProfilePageState extends State<ProfilePage> {
     globals.token = 0;
     globals.language = "english";
     globals.languageMap = {};
+    globals.allLanguage = [];
     Auth().signOut();
   }
 
-  void addPartner()
-  {
-    Navigator.of(context).
-        push( MaterialPageRoute(builder: (context) => add_partner()));
+  Future<void> addPartner()
+  async {
+    await Navigator.of(context).
+        push( MaterialPageRoute(builder: (context) => add_partner())).then((value) => setState(() {
+          
+        },));
   }
   
 
@@ -170,6 +173,67 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  void deletePartner() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Are you sure!?\nAll your data will be deleted!!\nAll cards and token as well!!'),
+          actions: [
+            TextButton(
+              child: Text('Delete'),
+              onPressed: () {
+                Navigator.pop(context);
+                deletePartnerSecond();
+    
+              },
+            ),
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+  void deletePartnerSecond() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('SURE?!',
+          style: TextStyle(fontSize: 50),),
+          actions: [
+            TextButton(
+              child: Text('DELETE'),
+              onPressed: () async {
+                  QuerySnapshot querySnapshot = await db.collection("users").doc(globals.UID).collection("savedCards").get();
+                      for (QueryDocumentSnapshot docSnapshot in querySnapshot.docs) {
+                        await docSnapshot.reference.delete();  
+                  } 
+                await db.collection("users").doc(globals.UID).delete().then((value) async =>
+                 await db.collection("users").doc(globals.GuestUID).delete().then((value) =>
+                  signOut()));   
+                  
+                
+              },
+              
+            ),
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
  
 
   
@@ -204,7 +268,8 @@ class _ProfilePageState extends State<ProfilePage> {
              CustomListItem(icon: Icons.person, title: "Copy your ID", subtitle: "", onTap: copyUid),
              CustomListItem(icon: Icons.person_outline, title: "Partners nickname", subtitle: nicknameOutput(true), onTap:() => inputDialog(true)),
              CustomListItem(icon: Icons.person_outline, title: "Your nickname", subtitle: nicknameOutput(false), onTap:() =>  inputDialog(false)),
-             CustomListItem(icon: Icons.language, title: "Select language", subtitle: globals.language, onTap: languagPick)
+             CustomListItem(icon: Icons.language, title: "Select language", subtitle: globals.language, onTap: languagPick),
+             CustomListItem(icon: Icons.person_off_outlined, title: "Delete partner", subtitle: "delete all cards as well", onTap: deletePartner)
 
             ]
             
@@ -217,6 +282,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
      
   }
+
+  
 }
 
 class CustomListItem extends StatelessWidget {

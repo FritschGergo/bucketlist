@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../auth.dart';
 import '../globals.dart' as globals;
+import '../loadData.dart';
 
 class add_partner extends StatefulWidget {
 
@@ -59,15 +60,17 @@ class _add_partnerState extends State<add_partner>
               {
                 if (switchValue == "option1")
                   {
+                    globals.host = 2,
                     globals.UID = textField1Value,
                     globals.GuestUID = user!.uid,
 
                   }else
                   {
+                    globals.host = 1,
                     globals.UID = user!.uid,
                     globals.GuestUID =  textField1Value,     
                   },
-                  addata(),
+                  addata().then((value) => Navigator.of(context).pop()),
 
               }
               else{
@@ -80,7 +83,7 @@ class _add_partnerState extends State<add_partner>
        
   }
 
-  void addata() async{
+  Future addata() async {
 
       await db.collection("users").doc(globals.UID).set({
         "partner" : globals.GuestUID,
@@ -95,10 +98,8 @@ class _add_partnerState extends State<add_partner>
         "host" : 2,
         "token" : 1,
       });
-
-      Navigator.pop(context);
-
-               
+      globals.token = 1;
+      
   }
 
   @override
