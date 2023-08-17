@@ -92,6 +92,7 @@ class _add_partnerState extends State<add_partner>
         "HerNinckName" : globals.HerNinckName,
         "HisNinckName" : globals.HisNinckName,
         "language" : "english",
+        "dailyDeckCompleted" : false,
         });   
       await db.collection("users").doc(globals.GuestUID).set({
         "partner" : globals.UID,

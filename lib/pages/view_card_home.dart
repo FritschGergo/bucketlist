@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:bucketlist/pages/erarnToken.dart';
 import 'package:bucketlist/pages/review_page.dart';
 import 'package:bucketlist/widget_tree.dart';
@@ -145,7 +147,72 @@ class view_card_home extends State<ViewCardHome>
     );
   }
 
+  Future<void> loadDailydeck() async {
+    const numberOfdailyCard = 5;
+    Random random = Random();
+    List<Map<String, dynamic>> MyCards = [];
+    List<int> randLsit = [];
+
+    for (int i = 0; i < globals.GlobalCards.length; i++)
+    {
+      if(globals.GlobalCards[i]["level"] == globals.currentDeck["level"])
+      {
+       bool contains = false;
+      for(int j = 0; j < globals.UsersCards.length; j++){
+        if(globals.GlobalCards[i]["id"] == globals.UsersCards[j]["id"])
+        {
+          contains = true;
+          break;
+          
+        }
+      }
+      if(!contains)
+      {
+        Map<String, dynamic> currentCard = Map.from(globals.GlobalCards[i]);
+
+        currentCard["deck"] = "dailyDeck";
+
+        MyCards.add(currentCard);
+        
+        
+      } 
+    }
+  }
+
+    if (MyCards.length >= numberOfdailyCard)
+    {
+      for(int i = 0; i < numberOfdailyCard; i++)
+      { int rand;
+        do {
+        rand = random.nextInt(MyCards.length);
+        } while (randLsit.contains(rand));
+        randLsit.add(rand);
+
+        globals.UsersCards.add(MyCards[rand]);
+        await db.collection("users").doc(globals.UID).collection("savedCards").doc(MyCards[rand]["id"]).set(MyCards[rand]);
+      }
+      
+      globals.dailyDeckCompleted = true;
+      await db.collection("users").doc(globals.UID).update({"dailyDeckCompleted" : true});
+
+      setState(() {
+        inprogress = false;
+      }); 
+    }
+    else{
+      print("you have all the crads"); //tájékoztatni a fekhasználót!!
+      Navigator.pop(context);
+    }
+  }
+  
+
   Widget myWidget(){
+    if(!globals.dailyDeckCompleted && globals.currentDeck["text"] == "dailyDeck")
+    {
+      inprogress = true;
+      loadDailydeck();
+    }
+
     if(inprogress)
     {
       return const Center(
@@ -204,6 +271,7 @@ class view_card_home extends State<ViewCardHome>
       body: myWidget()
     );
   }
+  
   
   
   

@@ -18,6 +18,8 @@ int token = 0;
 String language = "english";
 Map<String, dynamic> languageMap = {};
 List<String> allLanguage = [];
+bool dailyDeckCompleted = true;
+
 
 const Color myPrimaryColor =  Color.fromARGB(255, 191, 27, 27);
 const Color mySecondaryColor =  Color.fromARGB(255, 115, 10, 10);

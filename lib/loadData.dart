@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ntp/ntp.dart';
 import '../globals.dart' as globals;
 import 'auth.dart';
 
 class LoadMyData{ 
   final User? user = Auth().correntUser;
   FirebaseFirestore db = FirebaseFirestore.instance;
+  
 
   void loadGlobals()  { 
     {
@@ -109,13 +111,18 @@ class LoadMyData{
   }
 
   loadGlobalAsist2(DocumentSnapshot<Object?> doc) {
+
       
+  
       Map data2 = doc.data() as Map;
+      
       globals.HerNinckName = data2["HerNinckName"];
       globals.HisNinckName = data2["HisNinckName"];
       globals.language = data2["language"];
+      globals.dailyDeckCompleted = data2["dailyDeckCompleted"];
       loadLanguage(globals.language);
       allLanguageLoad();
+      loadDate(data2["previusDate"].toDate());
 
   }
   
@@ -142,4 +149,33 @@ class LoadMyData{
 
     }
   }
+  
+  Future<void> loadDate(DateTime previousNtpTime) async {
+    if (globals.dailyDeckCompleted){
+      DateTime ntpTime = await NTP.now();
+     //print(ntpTime);
+     //print(previousNtpTime);
+
+    if(previousNtpTime.year < ntpTime.year ||
+       previousNtpTime.month < ntpTime.month ||
+       previousNtpTime.day < ntpTime.day )
+      {
+        globals.dailyDeckCompleted = false;
+                
+        await db.collection("users").doc(globals.UID).update(
+              {"previusDate"       : ntpTime,
+               "dailyDeckCompleted": false});
+      }
+    }
+    
+
+
+
+
+
+
+    
+  }
+  
+  
 }

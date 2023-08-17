@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:ntp/ntp.dart';
 import '../auth.dart';
 import '../globals.dart' as globals;
 
@@ -45,6 +46,9 @@ class _HomePageState extends State<HomePage>
       if(i["list"].toString() == "LaterList")
       {
         laterList = true;
+      }
+      if(i["deck"].toString() == "dailyDeck"){
+        i["${globals.language}Deck"] = "Daily Deck";
       }
 
       if(i["level"] == level)
@@ -93,6 +97,8 @@ class _HomePageState extends State<HomePage>
 
         }
     }
+
+
     
     for (int i = 0; i < newDeck.length; i++)
     {
@@ -102,6 +108,15 @@ class _HomePageState extends State<HomePage>
             "color": 0,
             "level" : level
           });
+    }
+    if (!globals.dailyDeckCompleted)
+    {
+      MyData.add({
+          "text"  : "dailyDeck",
+          "languageDeck" : "Daily Deck",
+          "color" : 0,
+          "level" : level,
+        });
     }
     for (int i = 0; i < Deck.length; i++)
     {
