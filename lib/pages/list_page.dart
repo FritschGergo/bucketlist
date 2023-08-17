@@ -2,6 +2,7 @@
 import 'package:bucketlist/pages/view_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../auth.dart';
 import '../globals.dart' as globals;
@@ -22,6 +23,71 @@ class _listPageState extends State<listPage>
   late TabController _tabController;
   FirebaseFirestore db = FirebaseFirestore.instance;
   final User? user = Auth().correntUser;
+  bool isFilterd = false;
+  int level = 0;
+
+  void levelPick() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) => SizedBox(
+        width: double.infinity,
+        height: 250,
+        child: CupertinoPicker(
+          scrollController: FixedExtentScrollController(initialItem: level),
+          onSelectedItemChanged: (int value) async {
+            setState(() {
+              level = value;
+            });
+          },
+          itemExtent: 40, // Ezt állítsd az elemek magasságának megfelelően
+          children: [
+            Text(globals.languageMap["homeLight"]),
+            Text(globals.languageMap["homeMedium"]),
+            Text(globals.languageMap["homeExtreme"]),
+          ],
+        ),
+      ),
+    );
+    }
+  Widget buttons(String deck)
+  {
+    return Column(
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: [
+      // New FloatingActionButton
+      FloatingActionButton(
+        heroTag: "btn1",
+        backgroundColor: Colors.red.withOpacity(0.8),
+        onPressed: () async {
+          !isFilterd? levelPick() : null;
+          setState(() {
+            isFilterd = !isFilterd;
+          });
+          
+        },
+        child:isFilterd? Icon(Icons.filter_alt_off) : Icon(Icons.filter_alt),
+      ),
+      SizedBox(height: 10), // Add some spacing between the FloatingActionButton widgets
+      // Existing FloatingActionButton
+      if (deck == "BucketList") // Check if "BucketList" tab is active
+        FloatingActionButton(
+          heroTag: "btn0",
+          backgroundColor: Colors.red.withOpacity(0.8),
+          onPressed: () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => add_card()),
+            );
+            setState(() {});
+          },
+          child: Icon(Icons.add),
+        ),
+      SizedBox(height: 55), 
+    ],
+  );
+   
+
+  }
 
 
 Widget MyGridViewWidget(String deck) {
@@ -35,7 +101,7 @@ Widget MyGridViewWidget(String deck) {
 
   List<Map> MyData = [];
   for (Map i in globals.UsersCards) {
-    if (i["list"] == deck) {
+    if (isFilterd?  (i["list"] == deck && i["level"] == level) : i["list"] == deck) {
       MyData.add(i);
     }
   }
@@ -66,30 +132,16 @@ Widget MyGridViewWidget(String deck) {
         );
       },
     ),
-    floatingActionButton: deck == "BucketList" // Check if "BucketList" tab is active
-        ? Stack(
-            children: [
-              Positioned(
-                bottom: 70.0,
-                right: 20.0,
-                child: FloatingActionButton(
-                  backgroundColor: Colors.red.withOpacity(0.8),
-                  onPressed: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => add_card()),
-                    );
-                    setState(() {});
-                  },
-                  child: Icon(Icons.add),
-                ),
-              ),
-            ],
-          )
-        : null, // Hide FloatingActionButton for other tabs
+    
+    
+    floatingActionButton: buttons(deck),
     floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+  
+
   );
 }
+
+
 
 
 
