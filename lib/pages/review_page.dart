@@ -35,15 +35,44 @@ class _review_page extends State<review_page> {
   }
 
   void loadData(){
+    int reviewed = 0;
+    String myHost = "hostReview";
+    if(globals.host == 2)
+    {
+      myHost = "guestReview";
+    }
     if(MyData.isEmpty){
       for (var i in globals.UsersCards){
           if((i["level"] == globals.currentDeck["level"] && i["deck"] == globals.currentDeck["text"]) ||
           globals.currentDeck["text"] == i["list"])           //  ==> Nem egyezhet meg semilyen list semilyn deck nevével!!!
           { 
             MyData.add(i);
+            if(i[myHost] != 0) reviewed++;
+            
           }
+        }
+      if(MyData.length != reviewed && reviewed != 0)
+      {
+        checkData();
       }
+      
+
       }  
+  }
+
+  void checkData(){      // ha vegyesen van benne má értékelt és még nem akkor csak azoka hozza fel amiylen nem értékelt
+    String myHost = "hostReview";
+    List<Map> NewMyData = [];
+    if(globals.host == 2)
+    {
+      myHost = "guestReview";
+    }
+    for(var i in MyData)
+    {
+      if(i[myHost] == 0) NewMyData.add(i);
+    }
+    MyData = NewMyData;
+
   }
 
   Future<void> updateReview(String list, int i, int index) async {
