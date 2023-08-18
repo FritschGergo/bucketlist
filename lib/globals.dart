@@ -19,6 +19,9 @@ String language = "english";
 Map<String, dynamic> languageMap = {};
 List<String> allLanguage = [];
 bool dailyDeckCompleted = true;
+DateTime lastIdea = DateTime(2000);
+bool bannedFromIdeas = true;
+
 
 
 const Color myPrimaryColor =  Color.fromARGB(255, 191, 27, 27);

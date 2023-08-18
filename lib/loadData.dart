@@ -73,6 +73,9 @@ class LoadMyData{
           
           });
           globals.token = data["token"];
+          globals.lastIdea = data["lastIdea"].toDate();
+          globals.bannedFromIdeas = data["bannedFromIdeas"];
+
         }
 
         if (data["host"] == 1)
@@ -81,6 +84,8 @@ class LoadMyData{
           globals.host = 1;
           loadGlobalAsist2(doc);
           globals.token = data["token"];
+          globals.lastIdea = data["lastIdea"].toDate(); 
+          globals.bannedFromIdeas = data["bannedFromIdeas"];
         }
 
         if (data["host"] == 3) 
@@ -120,6 +125,7 @@ class LoadMyData{
       globals.HisNinckName = data2["HisNinckName"];
       globals.language = data2["language"];
       globals.dailyDeckCompleted = data2["dailyDeckCompleted"];
+                         // addpartner
       loadLanguage(globals.language);
       allLanguageLoad();
       loadDate(data2["previusDate"].toDate());

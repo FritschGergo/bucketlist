@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'package:bucketlist/pages/ideaPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart' hide Card ;
+import 'package:ntp/ntp.dart';
 import '../auth.dart';
 import '../globals.dart' as globals;
 import 'package:http/http.dart' as http;
@@ -22,13 +24,8 @@ class _earnToken extends State<earnToken>
   FirebaseFirestore db = FirebaseFirestore.instance;
   Map<String, dynamic>? paymentIntent;
   final User? user = Auth().correntUser;
-    
-  void buy(int price) async {
-    
-    
-  }
-
   
+    
  Widget CardItem({required String title, required Null Function() onTap}) {
   return Card(
     
@@ -164,6 +161,56 @@ class _earnToken extends State<earnToken>
     globals.token = globals.token + newToken;
 
   }
+
+  Future<bool> ideaIsPossible() async {
+    DateTime ntpTime = await NTP.now();
+    return(globals.lastIdea.year < ntpTime.year ||
+       globals.lastIdea.month < ntpTime.month ||
+       globals.lastIdea.day < ntpTime.day ) && !globals.bannedFromIdeas;
+      
+  }
+  void openidePageAssist()
+  {
+    Navigator.push(
+               context,
+               MaterialPageRoute(builder: (context) =>  ideaPage()),
+               );
+  }
+
+  void myShowDialog()
+  {
+    showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Alert'),
+                content: Text("You have already written ideas today, or you have banned from this function!"),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('OK'),
+                  ),
+                ],
+              );
+            },
+          );
+  }
+
+
+  
+
+  Future<void> openidePage() async
+  {
+    if(await ideaIsPossible()){
+      openidePageAssist();
+    }else
+    {
+      myShowDialog();
+    }
+    
+  }
  
   @override
   Widget build(BuildContext context) {
@@ -210,8 +257,7 @@ class _earnToken extends State<earnToken>
             CardItem(
               title: 'Share us your card ideas(5 ideas for 1 token)',
               onTap: () {
-                // Handle onTap for Card 5
-                Navigator.pop(context);
+                openidePage();
               },
             ),
           ],

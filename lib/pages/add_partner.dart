@@ -70,6 +70,7 @@ class _add_partnerState extends State<add_partner>
                     globals.UID = user!.uid,
                     globals.GuestUID =  textField1Value,     
                   },
+
                   addata().then((value) => Navigator.of(context).pop()),
 
               }
@@ -93,13 +94,22 @@ class _add_partnerState extends State<add_partner>
         "HisNinckName" : globals.HisNinckName,
         "language" : "english",
         "dailyDeckCompleted" : false,
+        "bannedFromIdeas" : false,
+        "previusDate": DateTime(2022),
+        "lastIdea": DateTime(2022),
+
         });   
       await db.collection("users").doc(globals.GuestUID).set({
         "partner" : globals.UID,
         "host" : 2,
         "token" : 1,
+        "lastIdea": DateTime(2022),
+        "bannedFromIdeas" : false,
       });
       globals.token = 1;
+      globals.bannedFromIdeas = false;
+      globals.lastIdea= DateTime(2022);
+      globals.dailyDeckCompleted = false; 
       
   }
 
