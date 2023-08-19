@@ -14,6 +14,7 @@ class add_partner extends StatefulWidget {
 class _add_partnerState extends State<add_partner> 
 {
   String textField1Value = '';
+  String textField2Value = '';
   String switchValue = 'option1';
 
   FirebaseFirestore db = FirebaseFirestore.instance;
@@ -44,7 +45,7 @@ class _add_partnerState extends State<add_partner>
   void _onSubmitButtonPressed() {
     // Perform form validation
     if (textField1Value.isEmpty) {
-      MyShowDialog('Please fill in all the text fields.');
+      MyShowDialog('Please fill in the first text field.');
       return;
     }
 
@@ -71,7 +72,9 @@ class _add_partnerState extends State<add_partner>
                     globals.GuestUID =  textField1Value,     
                   },
 
+                  invitation(textField2Value),
                   addata().then((value) => Navigator.of(context).pop()),
+
 
               }
               else{
@@ -82,6 +85,25 @@ class _add_partnerState extends State<add_partner>
           })
       });
        
+  }
+
+  Future<void> invitation(String inviteUID) async {
+    if(inviteUID != "")
+    {
+      Map testData;
+      await db.collection("users").doc(inviteUID).get().then(((DocumentSnapshot test) async => {
+         testData = test.data() as Map,
+         if(testData.isNotEmpty 
+         && !testData["bannedFromIdeas"]
+         && inviteUID != globals.GuestUID
+         && inviteUID != globals.UID)
+         {
+          await db.collection("users").doc(inviteUID).update({"token" : FieldValue.increment(3),}),
+         }
+      }));
+    }
+
+
   }
 
   Future addata() async {
@@ -133,14 +155,25 @@ class _add_partnerState extends State<add_partner>
                 },
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return 'Text Field 3 is required';
+                    return 'Text Field is required';
                   }
                   return null;
                 },
                 decoration: const InputDecoration(
-                  labelText: "Your Partners UID",
+                  labelText: "Your Partners ID",
                 ),
               ),
+              TextFormField(
+                onChanged: (value) {
+                  setState(() {
+                   textField2Value = value;
+                  });
+                },
+                decoration: const InputDecoration(
+                  labelText: "Invitation ID",
+                ),
+              ),
+               Text("Provide the ID of the invited person so that they can receive their reward."),
               SizedBox(height: 16.0),
               Text('In our relationship, I am the'),
               DropdownButton<String>(

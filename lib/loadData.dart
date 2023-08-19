@@ -1,5 +1,7 @@
+import 'package:bucketlist/widget_tree.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:ntp/ntp.dart';
 import '../globals.dart' as globals;
 import 'auth.dart';
@@ -13,9 +15,7 @@ class LoadMyData{
     {
       if (globals.host == 0 ){
         db.collection("users").doc(user?.uid).get().then((DocumentSnapshot doc) => {
-          
           loadGlobalAsist(doc),
-          
         });
       }
     }
@@ -24,7 +24,6 @@ class LoadMyData{
   Future<void> loadGlobalCards()async {
     await db.collection("cards").where("toList" ,isEqualTo: true).get()
         .then((QuerySnapshot qs) => {loadGlobalCardsAssist(qs)} );
-
   }
 
    loadGlobalCardsAssist(QuerySnapshot<Object?> qs) {
@@ -40,7 +39,7 @@ class LoadMyData{
      globals.GlobalCards = MyDtaList;
     }
 
-  Future<void> loadCards()
+  /*Future<void> loadCards()
   async {
    await db.collection("users").doc(globals.UID).collection("savedCards").where("toList" ,isEqualTo: true).get()
         .then((QuerySnapshot qs) => {loadCardsAssist(qs)} );
@@ -57,7 +56,7 @@ class LoadMyData{
      }
      globals.UsersCards = MyDtaList;
     }
-    
+  */
   void loadGlobalAsist(DocumentSnapshot doc) async 
   {
     if (doc.exists)
@@ -96,12 +95,14 @@ class LoadMyData{
         }
 
         
-        loadCards().then((value) => {
+        openListenerCard();
           loadGlobalCards().then((value) => {
             
             globals.inprogress = false,
-          })
-        });
+            openListenerUser(),
+          
+          });
+        
     }else
     { 
       globals.UID = user!.uid;
@@ -121,8 +122,8 @@ class LoadMyData{
   
       Map data2 = doc.data() as Map;
       
-      globals.HerNinckName = data2["HerNinckName"];
-      globals.HisNinckName = data2["HisNinckName"];
+      //globals.HerNinckName = data2["HerNinckName"];
+      //globals.HisNinckName = data2["HisNinckName"];
       globals.language = data2["language"];
       globals.dailyDeckCompleted = data2["dailyDeckCompleted"];
                          // addpartner
@@ -166,22 +167,65 @@ class LoadMyData{
        previousNtpTime.month < ntpTime.month ||
        previousNtpTime.day < ntpTime.day )
       {
-        globals.dailyDeckCompleted = false;
+        //globals.dailyDeckCompleted = false;
                 
         await db.collection("users").doc(globals.UID).update(
               {"previusDate"       : ntpTime,
                "dailyDeckCompleted": false});
       }
+    }  
+  }
+
+  
+  void openListenerCard(){
+    db.collection("users").doc(globals.UID).collection("savedCards").snapshots().listen((event) {
+    for (var change in event.docChanges) {
+      Map<String, dynamic> i  = change.doc.data() as Map<String, dynamic>;
+      i["id"] = change.doc.id;
+      switch (change.type) {
+        
+        case DocumentChangeType.added:
+          globals.UsersCards.add(i);
+          break;
+        case DocumentChangeType.modified:
+          for(int j = 0; j < globals.UsersCards.length; j++)
+          {
+            if(globals.UsersCards[j]["id"] == i["id"])
+            {
+              globals.UsersCards[j] = i;
+              break;
+            }
+          }
+          break;
+        case DocumentChangeType.removed:
+          for(int j = 0; j < globals.UsersCards.length; j++)
+          {
+            if(globals.UsersCards[j]["id"] == i["id"])
+            {
+              globals.UsersCards.removeAt(j);
+              break;
+            }
+          }
+          break;
+      }
     }
-    
-
-
-
-
-
-
-    
   }
   
+  );
   
+  }
+
+  
+  void openListenerUser(){
+    db.collection("users").doc(globals.UID).snapshots().listen((event) {
+      var data = event.data();
+      globals.HerNinckName = data!["HerNinckName"];
+      globals.HisNinckName = data["HisNinckName"];
+      globals.dailyDeckCompleted = data["dailyDeckCompleted"];
+      globals.lastIdea = data["previusDate"];
+    }
+    );
+  }
+
 }
+

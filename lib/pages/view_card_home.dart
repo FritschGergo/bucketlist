@@ -58,7 +58,7 @@ class view_card_home extends State<ViewCardHome>
         
         await db.collection("users").doc(globals.UID).collection("savedCards").doc(i["id"]).set(i);
         
-        globals.UsersCards.add(i);
+        //globals.UsersCards.add(i);
 
       }
       
@@ -188,7 +188,7 @@ class view_card_home extends State<ViewCardHome>
         } while (randLsit.contains(rand));
         randLsit.add(rand);
 
-        globals.UsersCards.add(MyCards[rand]);
+        //globals.UsersCards.add(MyCards[rand]);
         await db.collection("users").doc(globals.UID).collection("savedCards").doc(MyCards[rand]["id"]).set(MyCards[rand]);
       }
       

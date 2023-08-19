@@ -177,14 +177,14 @@ class _earnToken extends State<earnToken>
                );
   }
 
-  void myShowDialog()
+  void myShowDialog(String text, String title)
   {
     showDialog(
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text('Alert'),
-                content: Text("You have already written ideas today, or you have banned from this function!"),
+                title: Text(title),
+                content: Text(text),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -207,7 +207,7 @@ class _earnToken extends State<earnToken>
       openidePageAssist();
     }else
     {
-      myShowDialog();
+      myShowDialog("You have already written ideas today, or you have banned from this function!",'Alert');
     }
     
   }
@@ -250,8 +250,8 @@ class _earnToken extends State<earnToken>
             CardItem(
               title: 'Invite your partner or friends for 3token',
               onTap: () {
-                // Handle onTap for Card 4
-                Navigator.pop(context);
+                myShowDialog("Send your ID to your friend and have them paste it in the appropriate place when creating their connection with their partner.", "Inviting a friend.");
+                
               },
             ),
             CardItem(

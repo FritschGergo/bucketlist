@@ -49,7 +49,9 @@ class _add_cardState extends State<add_card>
         
        };
     await db.collection("users").doc(globals.UID).collection("savedCards").add(MyMap);
-    LoadMyData().loadCards().then((value) => Navigator.of(context).pop());
+    
+    //LoadMyData().loadCards().then((value) =>;
+     Navigator.of(context).pop();
   
   }
   
