@@ -37,8 +37,40 @@ class _MyNavigationPageState extends State<MyNavigationPage>
         LoadMyData().loadGlobals();
          globals.inprogress = true;
       }
-      Future.delayed(Duration(milliseconds: 100)).then((value) => setState(() {}));
+      Future.delayed(const Duration(milliseconds: 100)).then((value) => setState(() {}));
       //return const CircularProgressIndicator();
+    }
+    if (globals.inprogress)
+    {
+
+      return Scaffold(
+        backgroundColor: const Color.fromARGB(255, 184,29,31),
+        body: Center(child:  Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset('assets/logo.png', width: 300, height: 300),
+              const SizedBox(height: 20),
+              const Text(
+                "Bucket List",
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const CircularProgressIndicator(color: Colors.white,),
+              
+            ]
+          ) ,
+        )
+       
+      );
+      
+      
+      
+      
+    
     }
 
     return Scaffold(

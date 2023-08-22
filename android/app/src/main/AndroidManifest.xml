@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.bucketlist">
    <application
-        android:label="bucketlist"
+        android:label="Bucket List"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
