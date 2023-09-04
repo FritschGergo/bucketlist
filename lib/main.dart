@@ -1,5 +1,4 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
-import 'package:bucketlist/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:bucketlist/widget_tree.dart';
 import 'package:firebase_core/firebase_core.dart';

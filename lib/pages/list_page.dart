@@ -85,61 +85,85 @@ class _listPageState extends State<listPage>
       SizedBox(height: 55), 
     ],
   );
-   
-
   }
-
-
-Widget MyGridViewWidget(String deck) {
-  if (deck == "WishList") {
-    if (globals.host == 2) {
-      deck = "HostWishList";
-    } else {
-      deck = "GuestWishList";
+  
+  Color myColor(int j) {
+    if(j == 0)
+    {
+      return globals.myPrimaryColor;
     }
-  }
-
-  List<Map> MyData = [];
-  for (Map i in globals.UsersCards) {
-    if (isFilterd?  (i["list"] == deck && i["level"] == level) : i["list"] == deck) {
-      MyData.add(i);
+    if(j == 1){
+      return globals.mySecondaryColor;
     }
-  }
+    return globals.myTertiaryColor;
+}
 
-  return Scaffold(
-    body: GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        crossAxisCount: 2,
-      ),
-      itemCount: MyData.length,
-      itemBuilder: (BuildContext context, int index) {
-        return Card(
-          color: globals.myPrimaryColor,
-          child: InkWell(
-            onTap: () async {
-              globals.currentCardID = MyData[index]["id"];
-              await Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => view_card()),
-              );
-              setState(() {});
-            },
-            
-            child: Center(child: Text((MyData[index][globals.language] != null)? MyData[index][globals.language] : MyData[index]["english"])),
-          ),
-        );
-      },
-    ),
-    
-    
-    floatingActionButton: buttons(deck),
-    floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+  Widget MyGridViewWidget(String deck) {
+
+    String mypriority = "priorityHost";
+      if(globals.host == 2)
+      {
+        mypriority = "priorityGuest";
+      }
+
+    if (deck == "WishList") {
+      if (globals.host == 2) {
+        deck = "HostWishList";
+      } else {
+        deck = "GuestWishList";
+      }
+    }
+
+    List<Map> MyData = [];
+    for (int j = 0; j < 3; j++)
+    {
+      for (Map i in globals.UsersCards) {
+          if ((isFilterd?  (i["list"] == deck && i["level"] == level) : i["list"] == deck) && 
+          i[mypriority] == j) {
+            i["color"] = myColor(j);
+            MyData.add(i);
+          }
+        }
+    }
   
 
-  );
-}
+
+
+
+    return Scaffold(
+      body: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          crossAxisCount: 2,
+        ),
+        itemCount: MyData.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Card(
+            color: MyData[index]["color"],
+            child: InkWell(
+              onTap: () async {
+                globals.currentCardID = MyData[index]["id"];
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => view_card()),
+                );
+                setState(() {});
+              },
+              
+              child: Center(child: Text((MyData[index][globals.language] != null)? MyData[index][globals.language] : MyData[index]["english"])),
+            ),
+          );
+        },
+      ),
+      
+      
+      floatingActionButton: buttons(deck),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+    
+
+    );
+  } 
 
 
 
@@ -215,3 +239,5 @@ Widget MyGridViewWidget(String deck) {
 
   
 }
+
+

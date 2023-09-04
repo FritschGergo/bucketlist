@@ -1,3 +1,4 @@
+
 import 'package:bucketlist/loadData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
@@ -6,10 +7,15 @@ import 'package:flutter/material.dart';
 import '../globals.dart' as globals;
 //import '../auth.dart';
 
-class view_card extends StatelessWidget {
+class view_card extends StatefulWidget {
+  @override
+  State<view_card> createState() => _view_cardState();
+}
+
+class _view_cardState extends State<view_card> {
   FirebaseFirestore db = FirebaseFirestore.instance;
+
   int index = 0;
- 
 
   _showDeleteConfirmation(BuildContext context){
     showDialog(
@@ -118,15 +124,30 @@ class view_card extends StatelessWidget {
   }
 
   Widget textLoad() {
-        
+      String mypriority = "priorityHost";
+      if(globals.host == 2)
+      {
+        mypriority = "priorityGuest";
+      }
         for(int i = 0; i <= globals.UsersCards.length; i++){
           if(globals.UsersCards[i]["id"] == globals.currentCardID){
             index = i;
+            if(globals.UsersCards[i][mypriority] == 0){
+              updatePriority(i, mypriority, 2);
+            }
             return Text(((globals.UsersCards[i][globals.language] != null)? globals.UsersCards[i][globals.language] : globals.UsersCards[i]["english"]).toString());
+
+            
+
+
           }
         
         }
         return const Text("Error");   
+  }
+
+  Future<void> updatePriority(int i, String myPriority, setPriority) async {
+     await db.collection("users").doc(globals.UID).collection("savedCards").doc(globals.currentCardID).update({myPriority : setPriority});
   }
 
   Future<void> changeDeck(String ToDeck) async {
@@ -135,9 +156,29 @@ class view_card extends StatelessWidget {
    
   }
 
+  Widget myFavoriteButton() {
+     String mypriority = "priorityHost";
+      if(globals.host == 2)
+      {
+        mypriority = "priorityGuest";
+      }
+
+    return ElevatedButton(
+                    child: globals.UsersCards[index][mypriority] == 1 ? const Text(" No Favorite") :  const Text("Favorite"),
+                    
+                    onPressed: () {
+                      globals.UsersCards[index][mypriority] == 1 ? 
+                        updatePriority(index, mypriority, 2) :
+                        updatePriority(index, mypriority, 1);
+                      setState(() {});
+                    }
+    );                
+    
+  }
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: globals.myPrimaryColor,
@@ -177,12 +218,8 @@ class view_card extends StatelessWidget {
                       Navigator.pop(context);
                     },
                   ),
-                  ElevatedButton(
-                    child: Text('Favorite'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
+                  myFavoriteButton(),
+                  
                   
                   
                 ],
@@ -216,4 +253,6 @@ class view_card extends StatelessWidget {
       ),
     );
   }
+
+  
 }
