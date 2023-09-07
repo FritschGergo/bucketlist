@@ -151,7 +151,12 @@ class _listPageState extends State<listPage>
                 setState(() {});
               },
               
-              child: Center(child: Text((MyData[index][globals.language] != null)? MyData[index][globals.language] : MyData[index]["english"])),
+              child: Center(child: Text((MyData[index][globals.language] != null)? MyData[index][globals.language] : MyData[index]["english"], 
+                                                  style: const TextStyle(
+                                                    fontSize: 17 , 
+                                                    fontWeight: FontWeight.bold
+                                                  ),
+                                       textAlign: TextAlign.center,)),
             ),
           );
         },

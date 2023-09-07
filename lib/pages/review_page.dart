@@ -75,11 +75,12 @@ class _review_page extends State<review_page> {
 
   }
 
-  Future<void> updateReview(String list, int i, int index) async {
+  Future<void> updateReview(String list, int i, int index, String myHost, int vote) async {
 
     await db.collection("users").doc(globals.UID).collection("savedCards").doc(MyData[index]["id"])
-    .update({"list" : list});
-    globals.UsersCards[i]["list"] = list;
+    .update({"list" : list,
+              myHost : vote});
+    //globals.UsersCards[i]["list"] = list;
 
   }
 
@@ -92,7 +93,7 @@ class _review_page extends State<review_page> {
       myGuest = "hostReview";
     }
 
-    await db.collection("users").doc(globals.UID).collection("savedCards").doc(MyData[index]["id"]).update({myHost : vote});
+    
     
     for(int i = 0; i < globals.UsersCards.length; i++){
       if(MyData[index]["id"] == globals.UsersCards[i]["id"])
@@ -106,38 +107,41 @@ class _review_page extends State<review_page> {
       
                 if(reviewHost == 4 || reviewGuest == 4){
                   //delete card 
-                  updateReview("DislikeList", i, index);
+                  updateReview("DislikeList", i, index, myHost ,vote);
                   break;
                   
                 }
                 else if(reviewHost == 3 || reviewGuest == 3){
                   //later deck
-                  updateReview("LaterList", i, index);
+                  updateReview("LaterList", i, index, myHost ,vote);
                   break;
                 }
                 else if(reviewHost == 1 && reviewGuest == 1){
                   //Bucket List deck
-                  updateReview("BucketList", i, index);
+                  updateReview("BucketList", i, index, myHost ,vote);
                   break;
                   
                 }
                 else if(reviewHost == 2 && reviewGuest == 2){
                   //ideas card 
-                  updateReview("IdeasList", i, index);
+                  updateReview("IdeasList", i, index, myHost ,vote);
                   break;
                   
                 }
                 else if(reviewHost == 1 && reviewGuest == 2){
                   //Host Wishes deck
-                  updateReview("HostWishList", i, index);
+                  updateReview("HostWishList", i, index, myHost ,vote);
                   break;
                 }
                 else if(reviewHost == 2 && reviewGuest == 1){
                   //Host Guest deck
-                  updateReview("GuestWishList", i, index);
+                  updateReview("GuestWishList", i, index, myHost ,vote);
                   break;
                 }
+        }else{
+          await db.collection("users").doc(globals.UID).collection("savedCards").doc(MyData[index]["id"]).update({myHost : vote});
         }
+
         break;
         
 

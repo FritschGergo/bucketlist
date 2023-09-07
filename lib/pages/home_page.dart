@@ -193,7 +193,12 @@ class _HomePageState extends State<HomePage>
                             });
                             
                           },
-                        child: Center(child: Text(MyData[index]["languageDeck"])),
+                        child: Center(child: Text(MyData[index]["languageDeck"] , 
+                                                  style: const TextStyle(
+                                                    fontSize: 17 , 
+                                                    fontWeight: FontWeight.bold
+                                                  ),
+                                       textAlign: TextAlign.center,)),
                      
                       )        
                   );

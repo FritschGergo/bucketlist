@@ -1,3 +1,5 @@
+
+
 import 'package:bucketlist/widget_tree.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -185,7 +187,19 @@ class LoadMyData{
       switch (change.type) {
         
         case DocumentChangeType.added:
-          globals.UsersCards.add(i);
+          bool added = false;
+          for(int j = 0; j < globals.UsersCards.length; j++) // benne mararadt egy bug ki kell javítani a listener duplán érzékeli a hozzá adást!!
+          {
+            if(globals.UsersCards[j]["id"] == i["id"])
+            {
+              added = true;
+              break;
+            }
+          }
+          if(!added)
+          {
+            globals.UsersCards.add(i);
+          }
           break;
         case DocumentChangeType.modified:
           for(int j = 0; j < globals.UsersCards.length; j++)
@@ -222,7 +236,8 @@ class LoadMyData{
       globals.HerNinckName = data!["HerNinckName"];
       globals.HisNinckName = data["HisNinckName"];
       globals.dailyDeckCompleted = data["dailyDeckCompleted"];
-      globals.lastIdea = data["previusDate"];
+      globals.lastIdea = data["previusDate"].toDate();
+    
     }
     );
   }
