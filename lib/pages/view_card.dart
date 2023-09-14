@@ -133,9 +133,16 @@ class _view_cardState extends State<view_card> {
           if(globals.UsersCards[i]["id"] == globals.currentCardID){
             index = i;
             if(globals.UsersCards[i][mypriority] == 0){
-              updatePriority(i, mypriority, 2);
+              updatePriority(mypriority, 2);
             }
-            return Text(((globals.UsersCards[i][globals.language] != null)? globals.UsersCards[i][globals.language] : globals.UsersCards[i]["english"]).toString());
+            return Text(((globals.UsersCards[i][globals.language] != null)?
+                             globals.UsersCards[i][globals.language] :
+                              globals.UsersCards[i]["english"]).toString(),
+                                     style: const TextStyle(
+                                                    fontSize: 20 , 
+                                                    //fontWeight: FontWeight.bold
+                                                  ),
+                                       textAlign: TextAlign.center,);
 
             
 
@@ -146,8 +153,9 @@ class _view_cardState extends State<view_card> {
         return const Text("Error");   
   }
 
-  Future<void> updatePriority(int i, String myPriority, setPriority) async {
-     await db.collection("users").doc(globals.UID).collection("savedCards").doc(globals.currentCardID).update({myPriority : setPriority});
+  Future<void> updatePriority(String myPriority, setPriority) async {
+     await db.collection("users").doc(globals.UID).collection("savedCards").doc(globals.currentCardID).
+          update({myPriority : setPriority}).then((value) => setState(() {}));
   }
 
   Future<void> changeDeck(String ToDeck) async {
@@ -168,9 +176,9 @@ class _view_cardState extends State<view_card> {
                     
                     onPressed: () {
                       globals.UsersCards[index][mypriority] == 1 ? 
-                        updatePriority(index, mypriority, 2) :
-                        updatePriority(index, mypriority, 1);
-                      setState(() {});
+                        updatePriority(mypriority, 2) :
+                        updatePriority(mypriority, 1);
+                      
                     }
     );                
     
@@ -195,15 +203,16 @@ class _view_cardState extends State<view_card> {
             child: Container(
               width: double.infinity,
               child: Card(
-              margin: EdgeInsets.all(50.0),
-              child: SizedBox(
-                width: double.infinity,
-                height: double.infinity,
-                child: Center(
-                  child: textLoad(),
-                                      //style: TextStyle(fontSize: 24.0),
+                color: globals.myBackgroundColor,
+                margin: EdgeInsets.all(50.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: double.infinity,
+                  child: Center(
+                    child: textLoad(),
+                                        //style: TextStyle(fontSize: 24.0),
+                    ),
                   ),
-                ),
               ),
             ),
           ),

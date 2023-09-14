@@ -196,7 +196,7 @@ class _HomePageState extends State<HomePage>
                         child: Center(child: Text(MyData[index]["languageDeck"] , 
                                                   style: const TextStyle(
                                                     fontSize: 17 , 
-                                                    fontWeight: FontWeight.bold
+                                                    //fontWeight: FontWeight.bold
                                                   ),
                                        textAlign: TextAlign.center,)),
                      
@@ -239,6 +239,7 @@ class _HomePageState extends State<HomePage>
             ),
             
           ],
+          indicatorColor: Colors.white,
         ),
       ),
       body:Container(

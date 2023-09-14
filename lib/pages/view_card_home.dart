@@ -29,11 +29,12 @@ class view_card_home extends State<ViewCardHome>
     if(globals.currentDeck["color"] == 1)
     {
       return ElevatedButton(
+        
         child: Text('Buy'),
             onPressed: () {
             _showBuyConfirmation(context);              
                     },
-      );
+             );
     }  
     return ElevatedButton(
         child: Text('Open'),
@@ -226,13 +227,18 @@ class view_card_home extends State<ViewCardHome>
             child: Container(
               width: double.infinity,
               child: Card(
+                color: globals.myBackgroundColor,
               margin: EdgeInsets.fromLTRB(50, 50, 50, 0),
               child: SizedBox(
                 width: double.infinity,
                 height: double.infinity,
                 child: Center(
-                  child: Text(globals.currentDeck["languageDeck"]),
-                                      //style: TextStyle(fontSize: 24.0),
+                  child: Text(globals.currentDeck["languageDeck"],
+                                     style: const TextStyle(
+                                                    fontSize: 20 , 
+                                                    //fontWeight: FontWeight.bold
+                                                  ),
+                                       textAlign: TextAlign.center,)
                   ),
                 ),
               ),

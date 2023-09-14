@@ -70,9 +70,9 @@ class _add_cardState extends State<add_card>
           },
           itemExtent: 40, // Ezt állítsd az elemek magasságának megfelelően
           children: [
-            Text(globals.languageMap["homeLight"]),
-            Text(globals.languageMap["homeMedium"]),
-            Text(globals.languageMap["homeExtreme"]),
+            Text(globals.languageMap["homeLight"], style: const TextStyle( color: Colors.white)),
+            Text(globals.languageMap["homeMedium"], style: const TextStyle( color: Colors.white)),
+            Text(globals.languageMap["homeExtreme"], style: const TextStyle( color: Colors.white)),
           ],
         ),
       ),

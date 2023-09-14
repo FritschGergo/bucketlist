@@ -26,6 +26,6 @@ bool bannedFromIdeas = true;
 const Color myPrimaryColor =  Color.fromARGB(255, 191, 27, 27);
 const Color mySecondaryColor =  Color.fromARGB(255, 115, 10, 10);
 const Color myTertiaryColor =  Color.fromARGB(255,64, 1, 1);
-const Color myBackgroundColor =  Color.fromARGB(255, 191, 27, 27);
+const Color myBackgroundColor =  Color.fromARGB(255, 74, 74, 74);
 
 

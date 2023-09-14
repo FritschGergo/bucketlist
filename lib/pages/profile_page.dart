@@ -88,6 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
         width: double.infinity,
         height: 250,
         child: CupertinoPicker(
+          backgroundColor: Colors.black.withOpacity(0.5),
           scrollController: FixedExtentScrollController(initialItem: myIndex()),
           onSelectedItemChanged: (int value) async {
             globals.language = globals.allLanguage[value];
@@ -103,7 +104,9 @@ class _ProfilePageState extends State<ProfilePage> {
           children: List<Widget>.generate(globals.allLanguage.length, (index) {
             return Text(
               globals.allLanguage[index],
-              style: TextStyle(fontSize: 20), // Itt állítsd a szöveg stílusát
+              style: TextStyle(fontSize: 20,
+                  color: Colors.white),
+            // Itt állítsd a szöveg stílusát
             );
           }),
         ),
@@ -205,7 +208,7 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('SURE?!',
-          style: TextStyle(fontSize: 50),),
+          style: TextStyle(fontSize: 50)),
           actions: [
             TextButton(
               child: Text('DELETE'),
@@ -305,11 +308,14 @@ class CustomListItem extends StatelessWidget {
       Card(
         
         child: ListTile(
-          leading: Icon(icon), // Az ikon a lista elején jelenik meg
-          title: Text(title),
+          leading: Icon(icon, color: Colors.white,), // Az ikon a lista elején jelenik meg
+          title: Text(title, style: TextStyle( color: Colors.white)),
           onTap: onTap,
-          trailing: Text(subtitle),
+          trailing: Text(subtitle, style: TextStyle( color: Colors.white),
+            ),
+          
         ),
+        color: globals.myBackgroundColor,
       
     );
   }

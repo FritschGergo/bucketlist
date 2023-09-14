@@ -23,8 +23,10 @@ class _listPageState extends State<listPage>
   late TabController _tabController;
   FirebaseFirestore db = FirebaseFirestore.instance;
   final User? user = Auth().correntUser;
-  bool isFilterd = false;
+  bool isFilterdLevel = false;
+  String deckFilter = "";
   int level = 0;
+  bool buttonsOpen = false; 
 
   void levelPick() {
     showCupertinoModalPopup(
@@ -33,6 +35,7 @@ class _listPageState extends State<listPage>
         width: double.infinity,
         height: 250,
         child: CupertinoPicker(
+          backgroundColor: Colors.black.withOpacity(0.5),
           scrollController: FixedExtentScrollController(initialItem: level),
           onSelectedItemChanged: (int value) async {
             setState(() {
@@ -41,50 +44,168 @@ class _listPageState extends State<listPage>
           },
           itemExtent: 40, // Ezt állítsd az elemek magasságának megfelelően
           children: [
-            Text(globals.languageMap["homeLight"]),
-            Text(globals.languageMap["homeMedium"]),
-            Text(globals.languageMap["homeExtreme"]),
+            Text(globals.languageMap["homeLight"], style: const TextStyle( color: Colors.white)),
+            Text(globals.languageMap["homeMedium"],  style: const TextStyle( color: Colors.white)),
+            Text(globals.languageMap["homeExtreme"],  style: const TextStyle( color: Colors.white)),
           ],
         ),
       ),
     );
+  }
+  
+  void deckPcik(){
+    List<String> decks = [];
+    List<String> languageDecks = [];
+    
+    for (var i in globals.UsersCards)
+    {
+      if(!decks.contains(i["deck"]))
+      {
+        decks.add(i["deck"]);
+        languageDecks.add((i["${globals.language}Deck"]));
+      }
+       
     }
-  Widget buttons(String deck)
-  {
-    return Column(
-    mainAxisAlignment: MainAxisAlignment.end,
-    children: [
-      // New FloatingActionButton
-      FloatingActionButton(
-        heroTag: "btn1",
-        backgroundColor: Colors.red.withOpacity(0.8),
-        onPressed: () async {
-          !isFilterd? levelPick() : null;
-          setState(() {
-            isFilterd = !isFilterd;
-          });
-          
-        },
-        child:isFilterd? Icon(Icons.filter_alt_off) : Icon(Icons.filter_alt),
-      ),
-      SizedBox(height: 10), // Add some spacing between the FloatingActionButton widgets
-      // Existing FloatingActionButton
-      if (deck == "BucketList") // Check if "BucketList" tab is active
-        FloatingActionButton(
-          heroTag: "btn0",
-          backgroundColor: Colors.red.withOpacity(0.8),
-          onPressed: () async {
-            await Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => add_card()),
-            );
-            setState(() {});
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) => SizedBox(
+        width: double.infinity,
+        height: 250,
+        child: CupertinoPicker(
+          backgroundColor: Colors.black.withOpacity(0.5),
+         scrollController: FixedExtentScrollController(initialItem: 0),
+          onSelectedItemChanged: (int value) async {
+            setState(() {
+              deckFilter = decks[value];
+            });
           },
-          child: Icon(Icons.add),
+          itemExtent: 40, // Ezt állítsd az elemek magasságának megfelelően
+          children:  List<Widget>.generate(decks.length, (index) {
+            return Text(
+              languageDecks[index],
+              style: const TextStyle(fontSize: 20,
+                  color: Colors.white),
+           
+            );
+          }),
         ),
-      SizedBox(height: 55), 
-    ],
-  );
+      ),
+    );
+
+  }
+
+  Widget buttons(String deck, List<Map> myData)
+  {
+      
+      return Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (buttonsOpen)
+                FloatingActionButton(
+                heroTag: "btn3",
+                backgroundColor: globals.myBackgroundColor,
+                onPressed: () async {
+                  updatePriority("", myData);
+                  setState(() {
+                    
+                  });
+                  
+                },
+                child: const Icon(Icons.visibility_outlined, color: Colors.white)
+              ), 
+              if (buttonsOpen)
+               const SizedBox(height: 10), 
+
+              if (buttonsOpen)
+                FloatingActionButton(
+                heroTag: "btn4",
+                backgroundColor: globals.myBackgroundColor,
+                onPressed: () async {
+                  setState(() {
+                    
+                  });
+                  
+                },
+                child: const Icon(Icons.search, color: Colors.white)
+              ), 
+              if (buttonsOpen)
+               const SizedBox(height: 10), 
+
+              if (buttonsOpen)
+                FloatingActionButton(
+                heroTag: "btn5",
+                backgroundColor: globals.myBackgroundColor,
+                onPressed: () async {
+                  if (deckFilter == "")
+                  {
+                    deckPcik();
+                    setState(() {
+                      
+                    });
+                  }
+                  else{
+                     setState(() {
+                      deckFilter = "";
+                  });
+                  }
+                 
+                 
+                  
+                },
+                child: deckFilter == "" ? const Icon(Icons.filter_list, color: Colors.white) : const Icon(Icons.filter_list_off, color: Colors.white)
+              ), 
+              if (buttonsOpen)
+               const SizedBox(height: 10),
+
+              if (buttonsOpen)
+                FloatingActionButton(
+                heroTag: "btn1",
+                backgroundColor: globals.myBackgroundColor,
+                onPressed: () async {
+                  !isFilterdLevel? levelPick() : null;
+                  setState(() {
+                    isFilterdLevel = !isFilterdLevel;
+                  });
+                  
+                },
+                child:isFilterdLevel? const Icon(Icons.filter_alt_off, color: Colors.white) :  const Icon(Icons.filter_alt, color: Colors.white,),
+              ), 
+              if (buttonsOpen)
+               const SizedBox(height: 10), 
+      
+              if (deck == "BucketList" && buttonsOpen) // Check if "BucketList" tab is active
+                FloatingActionButton(
+                  heroTag: "btn0",
+                  backgroundColor: globals.myBackgroundColor,
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => add_card()),
+                    );
+                    setState(() {});
+                  },
+                  child: const Icon(Icons.add, color: Colors.white),
+                ),
+              if (buttonsOpen)
+                const SizedBox(height: 10),
+              
+              FloatingActionButton(
+                  heroTag: "btn2",
+                  backgroundColor: globals.myBackgroundColor,
+                  onPressed: () async {
+                    
+                    setState(() {
+                      buttonsOpen =!buttonsOpen;
+                    });
+                    
+                  },
+                  child:buttonsOpen? const Icon(Icons.arrow_downward, color: Colors.white) :  const Icon(Icons.more_vert, color: Colors.white),
+                ),
+                const SizedBox(height: 55),
+            ],
+          );
+    
+     
   }
   
   Color myColor(int j) {
@@ -118,19 +239,21 @@ class _listPageState extends State<listPage>
     for (int j = 0; j < 3; j++)
     {
       for (Map i in globals.UsersCards) {
-          if ((isFilterd?  (i["list"] == deck && i["level"] == level) : i["list"] == deck) && 
-          i[mypriority] == j) {
+          if ((isFilterdLevel?  (i["list"] == deck && i["level"] == level) : i["list"] == deck)
+            && i[mypriority] == j
+            &&  (deckFilter == "" || deckFilter == i["deck"])) 
+          {
             i["color"] = myColor(j);
             MyData.add(i);
           }
         }
     }
+
+    
   
-
-
-
-
+    bool pressed = true;
     return Scaffold(
+      
       body: GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisSpacing: 10,
@@ -139,9 +262,20 @@ class _listPageState extends State<listPage>
         ),
         itemCount: MyData.length,
         itemBuilder: (BuildContext context, int index) {
+          String textToShow = (MyData[index][globals.language] != null)
+              ? MyData[index][globals.language]
+              : MyData[index]["english"];
+
+          if (textToShow.length > 50) {
+            textToShow = textToShow.substring(0, 50) + "...";
+}
           return Card(
+            
             color: MyData[index]["color"],
             child: InkWell(
+              onLongPress:   () {
+                updatePriority(MyData[index]["id"], MyData);
+              },
               onTap: () async {
                 globals.currentCardID = MyData[index]["id"];
                 await Navigator.push(
@@ -151,24 +285,52 @@ class _listPageState extends State<listPage>
                 setState(() {});
               },
               
-              child: Center(child: Text((MyData[index][globals.language] != null)? MyData[index][globals.language] : MyData[index]["english"], 
-                                                  style: const TextStyle(
-                                                    fontSize: 17 , 
-                                                    fontWeight: FontWeight.bold
-                                                  ),
-                                       textAlign: TextAlign.center,)),
+              child: Center(child: Text(
+                   textToShow, 
+                      style: const TextStyle(
+                        fontSize: 17 , 
+                    
+                      ),
+                      textAlign: TextAlign.center,),
             ),
+          )
           );
         },
       ),
       
       
-      floatingActionButton: buttons(deck),
+      floatingActionButton: buttons(deck, MyData),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     
 
     );
   } 
+
+   Future<void> updatePriority(String id, List<Map> myData ) async {
+    for (var i in myData)
+    {
+      if (i["id"] == id || id == "")
+      {
+        String myPriority = "priorityHost";
+        if(globals.host == 2)
+        {
+          myPriority = "priorityGuest";
+        }
+        if(i[myPriority] == 0){
+           await db.collection("users").doc(globals.UID).collection("savedCards").doc(i["id"]).
+          update({myPriority : 2}).then((value) => setState(() {}));
+        }
+        if (i["id"] == id)
+        {
+          break; 
+        }
+         
+      }
+
+    }
+    
+    
+  }
 
 
 
@@ -210,6 +372,7 @@ class _listPageState extends State<listPage>
             ),
             
           ],
+          indicatorColor: Colors.white,
         ),
       ),
       body: Container(

@@ -25,11 +25,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
+        primarySwatch: Colors.red,
         primaryColor: globals.myPrimaryColor,
-        // scaffoldBackgroundColor: globals.myBackgroundColor,
-       
+        scaffoldBackgroundColor: Color.fromARGB(255, 42, 42, 42),
+        textTheme: const TextTheme( bodyMedium
+          : TextStyle(color: Colors.white) 
+        ) 
+        
+
       ),
-      darkTheme: ThemeData.dark(),
+      //darkTheme: ThemeData.dark(),
       
 
       home: const SplashScreen(),
@@ -46,7 +51,9 @@ class SplashScreen extends StatelessWidget {
     return AnimatedSplashScreen(splash: Column(
       children: [
         Image.asset('assets/logo.png' , width: 300, height: 300),
-        const Text("Bucket List" , style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),)
+        const Text("Bucket List" , style: TextStyle(fontSize: 40, 
+                                                    fontWeight: FontWeight.bold, 
+                                                    color: Colors.white),)
       ],
     ),
     backgroundColor: Color.fromARGB(255, 184,29,31), 

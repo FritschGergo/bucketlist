@@ -58,24 +58,37 @@ class _LoginPageState extends State<LoginPage> {
     bool isPassword,
   ) {
     return TextField(
-      controller: controller,
-      obscureText: isPassword && !_isPasswordVisible,
-      decoration: InputDecoration(
-        labelText: title,
-        suffixIcon: isPassword
-            ? IconButton(
-                icon: Icon(
-                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _isPasswordVisible = !_isPasswordVisible;
-                  });
-                },
-              )
-            : null,
-      ),
-    );
+  controller: controller,
+  obscureText: isPassword && !_isPasswordVisible,
+  decoration: InputDecoration(
+    labelText: title,
+    suffixIcon: isPassword
+        ? IconButton(
+            icon: Icon(
+              _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+              color: Colors.white, // Az ikon színét kékre állítja
+            ),
+            onPressed: () {
+              setState(() {
+                _isPasswordVisible = !_isPasswordVisible;
+              });
+            },
+          )
+        : null,
+    labelStyle: const TextStyle(
+      color: Colors.white,
+    ),
+    enabledBorder: const UnderlineInputBorder(
+      borderSide: BorderSide(color: Colors.white), // Az elválasztó vonal színét kékre állítja
+    ),
+    focusedBorder: const UnderlineInputBorder(
+      borderSide: BorderSide(color: Colors.red), // Az elválasztó vonal színét kékre állítja, amikor a mező fókuszban van
+    ),
+  ),
+  style: const TextStyle(
+    color: Colors.white, // A beírt szöveg színét kékre állítja
+  ),
+);
   }
 
   Widget _errorMessage() {
@@ -85,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _submitButtonLogin() {
     return ElevatedButton(
       onPressed:signInWithEmailAndPassword,
-      child: Text('Login'),
+      child: const Text('Login'),
       );
   }
 
@@ -108,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
           });
         }
       },
-      child: Text('Register'),
+      child: const Text('Register'),
     );
   }
 
@@ -116,6 +129,11 @@ class _LoginPageState extends State<LoginPage> {
     return Row(
       children: [
         Checkbox(
+          fillColor: MaterialStateProperty.resolveWith<Color>(
+                (Set<MaterialState> states) {
+                  return Colors.white; // A CheckBox színét fehérre állítja
+                },
+              ),
           value: _isTermsAndConditionsChecked,
           onChanged: (value) {
             setState(() {
@@ -123,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
             });
           },
         ),
-        Text('I accept the '),
+        const Text('I accept the '),
         GestureDetector(
           onTap: () {
             // Implement the functionality to open the Terms and Conditions page
@@ -132,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
             // with the detailed terms and conditions.
             print('Open Terms and Conditions');
           },
-          child: Text(
+          child: const Text(
             'Terms and Conditions',
             style: TextStyle(
               color: Colors.blue,

@@ -28,6 +28,7 @@ class _earnToken extends State<earnToken>
     
  Widget CardItem({required String title, required Null Function() onTap}) {
   return Card(
+    color: globals.myBackgroundColor,
     
     shape: RoundedRectangleBorder(
           side: BorderSide(
@@ -41,7 +42,7 @@ class _earnToken extends State<earnToken>
         child :SizedBox(
         height: 100,
         child: Center(
-          child: Text(title),
+          child: Text(title, style : const TextStyle(fontSize: 20)),
         
         ),
       )
@@ -248,14 +249,14 @@ class _earnToken extends State<earnToken>
               },
             ),
             CardItem(
-              title: 'Invite your partner or friends for 3token',
+              title: 'Invite your friends for 3token',
               onTap: () {
                 myShowDialog("Send your ID to your friend and have them paste it in the appropriate place when creating their connection with their partner.", "Inviting a friend.");
                 
               },
             ),
             CardItem(
-              title: 'Share us your card ideas(5 ideas for 1 token)',
+              title: 'Share us your card ideas\n(5 ideas for 1 token)',
               onTap: () {
                 openidePage();
               },

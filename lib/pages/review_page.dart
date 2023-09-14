@@ -102,8 +102,8 @@ class _review_page extends State<review_page> {
         
         if(globals.UsersCards[i][myGuest] != 0)
         {
-          int reviewHost = globals.UsersCards[i][myHost];
-          int reviewGuest = globals.UsersCards[i][myGuest];
+          int reviewHost = globals.UsersCards[i]["hostReview"];
+          int reviewGuest = globals.UsersCards[i]["guestReview"];
       
                 if(reviewHost == 4 || reviewGuest == 4){
                   //delete card 
@@ -265,6 +265,7 @@ class _review_page extends State<review_page> {
         swipeDirection = 0;
       },
       child: Card(
+         color: globals.myBackgroundColor,
         margin: EdgeInsets.all(50.0),
         child: SizedBox(
           width: double.infinity,
@@ -273,7 +274,13 @@ class _review_page extends State<review_page> {
             child: Text(
               (MyData[index][globals.language] != null)
                   ? MyData[index][globals.language]
-                  : MyData[index]["english"],
+                  : MyData[index]["english"]
+                  , 
+                                                  style: const TextStyle(
+                                                    fontSize: 20 , 
+                                                    //fontWeight: FontWeight.bold
+                                                  ),
+                                       textAlign: TextAlign.center,
             ),
           ),
         ),

@@ -84,6 +84,7 @@ class _MyNavigationPageState extends State<MyNavigationPage>
               ProfilePage(),
             ],
             controller: _controller,
+            
           ),
           Positioned(
             left: 20,
@@ -115,6 +116,7 @@ class _MyNavigationPageState extends State<MyNavigationPage>
                         icon: Icon(Icons.person),
                       ),
                     ],
+                    indicatorColor: Colors.white,
                   ),
                 ),
               ),
